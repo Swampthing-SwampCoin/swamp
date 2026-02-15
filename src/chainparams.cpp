@@ -122,12 +122,52 @@ public:
         assert(genesis.hashMerkleRoot == uint256S("0xde4fe11d6d0c735a192d4e6eed593ad575ccd671ff4ff0d9188e347e067d028d"));
 
         vSeeds.clear();
-        vSeeds.push_back(CDNSSeedData("45.32.217.164", "45.32.217.164"));
-		vSeeds.push_back(CDNSSeedData("108.61.202.115", "108.61.202.115"));
-		vSeeds.push_back(CDNSSeedData("104.207.149.95", "104.207.149.95"));
-		vSeeds.push_back(CDNSSeedData("45.32.176,249", "45.32.176,249"));
-		vSeeds.push_back(CDNSSeedData("198.13.39.174", "198.13.39.174"));
-	        vSeeds.push_back(CDNSSeedData("104.155.177.16", "104.155.177.16"));
+        vSeeds.push_back(CDNSSeedData("167.86.127.48", "167.86.127.48"));
+        vSeeds.push_back(CDNSSeedData("207.180.198.37", "207.180.198.37"));
+        vSeeds.push_back(CDNSSeedData("173.249.15.113", "173.249.15.113"));
+        vSeeds.push_back(CDNSSeedData("207.58.173.147", "207.58.173.147"));
+        vSeeds.push_back(CDNSSeedData("204.44.70.109", "204.44.70.109"));
+        vSeeds.push_back(CDNSSeedData("108.174.50.173", "108.174.50.173"));
+        vSeeds.push_back(CDNSSeedData("155.94.154.196", "155.94.154.196"));
+        vSeeds.push_back(CDNSSeedData("37.26.136.250", "37.26.136.250"));
+        vSeeds.push_back(CDNSSeedData("185.241.151.35", "185.241.151.35"));
+        vSeeds.push_back(CDNSSeedData("107.175.33.105", "107.175.33.105"));
+        vSeeds.push_back(CDNSSeedData("172.245.144.102", "172.245.144.102"));
+        vSeeds.push_back(CDNSSeedData("5.189.182.132", "5.189.182.132"));
+        vSeeds.push_back(CDNSSeedData("45.130.23.30", "45.130.23.30"));
+        vSeeds.push_back(CDNSSeedData("51.79.71.78", "51.79.71.78"));
+        vSeeds.push_back(CDNSSeedData("51.79.69.212", "51.79.69.212"));
+        vSeeds.push_back(CDNSSeedData("51.79.65.49", "51.79.65.49"));
+        vSeeds.push_back(CDNSSeedData("51.79.65.106", "51.79.65.106"));
+        vSeeds.push_back(CDNSSeedData("129.146.161.225", "129.146.161.225"));
+        vSeeds.push_back(CDNSSeedData("141.145.207.8", "141.145.207.8"));
+        vSeeds.push_back(CDNSSeedData("141.145.197.15", "141.145.197.15"));
+        vSeeds.push_back(CDNSSeedData("183.88.212.13", "183.88.212.13"));
+        vSeeds.push_back(CDNSSeedData("213.21.195.97", "213.21.195.97"));
+        vSeeds.push_back(CDNSSeedData("141.145.201.104", "141.145.201.104"));
+        vSeeds.push_back(CDNSSeedData("23.176.104.23", "23.176.104.23"));
+        vSeeds.push_back(CDNSSeedData("5.189.174.19", "5.189.174.19"));
+        vSeeds.push_back(CDNSSeedData("62.84.177.86", "62.84.177.86"));
+        vSeeds.push_back(CDNSSeedData("1.94.105.158", "1.94.105.158"));
+        vSeeds.push_back(CDNSSeedData("141.145.204.242", "141.145.204.242"));
+        vSeeds.push_back(CDNSSeedData("113.120.117.17", "113.120.117.17"));
+        vSeeds.push_back(CDNSSeedData("173.34.36.239", "173.34.36.239"));
+        vSeeds.push_back(CDNSSeedData("49.48.52.237", "49.48.52.237"));
+        vSeeds.push_back(CDNSSeedData("107.172.73.124", "107.172.73.124"));
+        vSeeds.push_back(CDNSSeedData("161.97.173.197", "161.97.173.197"));
+        vSeeds.push_back(CDNSSeedData("173.254.249.46", "173.254.249.46"));
+        vSeeds.push_back(CDNSSeedData("129.146.20.199", "129.146.20.199"));
+        vSeeds.push_back(CDNSSeedData("66.70.182.1", "66.70.182.1"));
+        vSeeds.push_back(CDNSSeedData("153.66.173.115", "153.66.173.115"));
+        vSeeds.push_back(CDNSSeedData("67.215.244.133", "67.215.244.133"));
+        vSeeds.push_back(CDNSSeedData("85.122.121.172", "85.122.121.172"));
+        vSeeds.push_back(CDNSSeedData("93.44.134.30", "93.44.134.30"));
+        vSeeds.push_back(CDNSSeedData("86.125.212.92", "86.125.212.92"));
+        vSeeds.push_back(CDNSSeedData("27.138.155.95", "27.138.155.95"));
+        vSeeds.push_back(CDNSSeedData("141.145.211.89", "141.145.211.89"));
+        vSeeds.push_back(CDNSSeedData("129.146.20.255", "129.146.20.255"));
+        vSeeds.push_back(CDNSSeedData("161.97.182.56", "161.97.182.56"));
+        vSeeds.push_back(CDNSSeedData("31.223.40.180", "31.223.40.180"));
 
 
         // Swamp addresses start with 's'

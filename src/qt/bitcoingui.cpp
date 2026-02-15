@@ -263,7 +263,7 @@ BitcoinGUI::BitcoinGUI(const PlatformStyle *platformStyle, const NetworkStyle *n
 #ifndef QT_NO_TOOLTIP
     discord->setToolTip(QApplication::translate("OverviewPage", "Join the Official Swamp Coin Discord Community.", nullptr));
 #endif // QT_NO_TOOLTIP
-    discord->setText(QApplication::translate("OverviewPage", "<a href=\"https://discord.gg/r7zKfy5\"><img src=\":/icons/discord\" width=\"21\" height=\"21\"></a>", nullptr));
+    discord->setText(QApplication::translate("OverviewPage", "<a href=\"https://discord.gg/PxwMzE2\"><img src=\":/icons/discord\" width=\"21\" height=\"21\"></a>", nullptr));
             
             QLabel* webs = new QLabel();
     webs->setObjectName(QStringLiteral("webs"));
