@@ -28,9 +28,9 @@
 #include "privatesend-client.h"
 #endif
 
-#include <QNetworkProxy>
 #include <QSettings>
 #include <QStringList>
+#include <QtNetwork/QNetworkProxy>
 
 OptionsModel::OptionsModel(QObject *parent, bool resetSettings) :
     QAbstractListModel(parent)
