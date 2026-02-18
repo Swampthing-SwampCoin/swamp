@@ -28,7 +28,6 @@
 #include "privatesend-client.h"
 #endif
 
-#include <QtNetwork/QNetworkProxy>
 #include <QSettings>
 #include <QStringList>
 
