@@ -7,6 +7,7 @@ $(package)_patches=cmake_fixups.patch
 $(package)_patches += fix_mingw_link.patch
 $(package)_patches += netbsd_fixup.patch
 $(package)_patches += winver_fixup.patch
+$(package)_patches += fix_mingw_crypto.patch
 $(package)_build_subdir=build
 
 # When building for Windows, we set _WIN32_WINNT to target the same Windows
@@ -24,7 +25,8 @@ define $(package)_preprocess_cmds
   patch -p1 < $($(package)_patch_dir)/cmake_fixups.patch && \
   patch -p1 < $($(package)_patch_dir)/fix_mingw_link.patch && \
   patch -p1 < $($(package)_patch_dir)/netbsd_fixup.patch && \
-  patch -p1 < $($(package)_patch_dir)/winver_fixup.patch
+  patch -p1 < $($(package)_patch_dir)/winver_fixup.patch && \
+  patch -p1 < $($(package)_patch_dir)/fix_mingw_crypto.patch
 endef
 
 define $(package)_config_cmds
