@@ -30,6 +30,7 @@
 
 #include <QSettings>
 #include <QStringList>
+#include <qnetworkproxy.h>
 
 OptionsModel::OptionsModel(QObject *parent, bool resetSettings) :
     QAbstractListModel(parent)

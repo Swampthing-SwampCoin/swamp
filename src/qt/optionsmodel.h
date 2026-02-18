@@ -8,7 +8,10 @@
 #include "amount.h"
 
 #include <QAbstractListModel>
-#include <QNetworkProxy>
+
+QT_BEGIN_NAMESPACE
+class QNetworkProxy;
+QT_END_NAMESPACE
 
 /** Interface from Qt to configuration data structure for Bitcoin client.
    To Qt, the options are presented as a list with the different options
