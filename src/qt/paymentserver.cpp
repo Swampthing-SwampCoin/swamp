@@ -557,7 +557,8 @@ bool PaymentServer::processPaymentRequest(const PaymentRequestPlus& request, Sen
     QList<std::pair<CScript, CAmount> > sendingTos = request.getPayTo();
     QStringList addresses;
 
-    Q_FOREACH(const std::pair<CScript, CAmount>& sendingTo, sendingTos) {
+    typedef std::pair<CScript, CAmount> SendingToType;
+    Q_FOREACH(const SendingToType& sendingTo, sendingTos) {
         // Extract and check destination addresses
         CTxDestination dest;
         if (ExtractDestination(sendingTo.first, dest)) {
