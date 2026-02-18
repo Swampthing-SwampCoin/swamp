@@ -1,10 +1,10 @@
 --- a/src/fcobjs.h
 +++ b/src/fcobjs.h
-@@ -51,7 +51,6 @@ FC_OBJECT (RGBA,                FcTypeInteger,  NULL)
- FC_OBJECT (SCALE,               FcTypeDouble,   NULL)
- FC_OBJECT (MINSPACE,            FcTypeBool,     NULL)
--FC_OBJECT (CHARWIDTH,           FcTypeInteger,  NULL)
- FC_OBJECT (CHAR_HEIGHT,         FcTypeInteger,  NULL)
- FC_OBJECT (MATRIX,              FcTypeMatrix,   NULL)
- FC_OBJECT (CHARSET,             FcTypeCharSet,  FcCompareCharSet)
+@@ -51,7 +51,6 @@ FC_OBJECT (RGBA,		FcTypeInteger,	NULL)
+ FC_OBJECT (SCALE,		FcTypeDouble,	NULL)
+ FC_OBJECT (MINSPACE,		FcTypeBool,	NULL)
+-FC_OBJECT (CHARWIDTH,		FcTypeInteger,	NULL)
+ FC_OBJECT (CHAR_HEIGHT,	FcTypeInteger,	NULL)
+ FC_OBJECT (MATRIX,		FcTypeMatrix,	NULL)
+ FC_OBJECT (CHARSET,		FcTypeCharSet,	FcCompareCharSet)
 
