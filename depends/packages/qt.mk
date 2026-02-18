@@ -262,9 +262,10 @@ define $(package)_config_cmds
   export PKG_CONFIG_SYSROOT_DIR=/ && \
   export PKG_CONFIG_LIBDIR=$(host_prefix)/lib/pkgconfig && \
   export PKG_CONFIG_PATH=$(host_prefix)/share/pkgconfig && \
-  export OPENSSL_LIBS='-L$(host_prefix)/lib -lssl -lcrypto' && \
+  export OPENSSL_LIBS='-L$(host_prefix)/lib -lssl -lcrypto -lws2_32 -lgdi32 -lcrypt32' && \
+  export OPENSSL_PREFIX='$(host_prefix)' && \
   cd qtbase && \
-  ./configure -top-level $($(package)_config_opts)
+  ./configure -top-level $($(package)_config_opts) -I $(host_prefix)/include -L $(host_prefix)/lib
 endef
 
 define $(package)_build_cmds
