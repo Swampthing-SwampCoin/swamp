@@ -112,6 +112,7 @@ AC_DEFUN([BITCOIN_QT_CONFIGURE],[
   if test x$bitcoin_qt_got_major_vers = x5; then
     _BITCOIN_QT_IS_STATIC
     if test x$bitcoin_cv_static_qt = xyes; then
+      _BITCOIN_QT_CHECK_STATIC_LIBS
       _BITCOIN_QT_FIND_STATIC_PLUGINS
       AC_DEFINE(QT_STATICPLUGIN, 1, [Define this symbol if qt plugins are static])
       AC_CACHE_CHECK(for Qt < 5.4, bitcoin_cv_need_acc_widget,[AC_COMPILE_IFELSE([AC_LANG_PROGRAM(
@@ -127,6 +128,8 @@ AC_DEFUN([BITCOIN_QT_CONFIGURE],[
         _BITCOIN_QT_CHECK_STATIC_PLUGINS([Q_IMPORT_PLUGIN(AccessibleFactory)], [-lqtaccessiblewidgets])
       fi
       if test x$TARGET_OS = xwindows; then
+        dnl Linking against wtsapi32 is required. See Bitcoin Core #17749
+        AX_CHECK_LINK_FLAG([-lwtsapi32], [QT_LIBS="$QT_LIBS -lwtsapi32"], [AC_MSG_ERROR([could not link against -lwtsapi32])])
         _BITCOIN_QT_CHECK_STATIC_PLUGINS([Q_IMPORT_PLUGIN(QWindowsIntegrationPlugin)],[-lqwindows])
         AC_DEFINE(QT_QPA_PLATFORM_WINDOWS, 1, [Define this symbol if the qt platform is windows])
       elif test x$TARGET_OS = xlinux; then
@@ -332,6 +335,25 @@ AC_DEFUN([_BITCOIN_QT_CHECK_STATIC_PLUGINS],[
     [AC_MSG_RESULT(yes); QT_LIBS="$2 $QT_LIBS"],
     [AC_MSG_RESULT(no); BITCOIN_QT_FAIL(Could not resolve: $2)])
   LIBS="$CHECK_STATIC_PLUGINS_TEMP_LIBS"
+])
+
+dnl Internal. Check Qt static libs with PKG_CHECK_MODULES.
+dnl Outputs: QT_LIBS is prepended.
+AC_DEFUN([_BITCOIN_QT_CHECK_STATIC_LIBS], [
+  m4_ifdef([PKG_CHECK_MODULES],[
+  if test x$use_pkgconfig = xyes; then
+    PKG_CHECK_MODULES([QT_ACCESSIBILITY], [Qt5AccessibilitySupport], [QT_LIBS="$QT_ACCESSIBILITY_LIBS $QT_LIBS"], [AC_MSG_WARN([Qt5AccessibilitySupport not found])])
+    PKG_CHECK_MODULES([QT_DEVICEDISCOVERY], [Qt5DeviceDiscoverySupport], [QT_LIBS="$QT_DEVICEDISCOVERY_LIBS $QT_LIBS"], [AC_MSG_WARN([Qt5DeviceDiscoverySupport not found])])
+    PKG_CHECK_MODULES([QT_EDID], [Qt5EdidSupport], [QT_LIBS="$QT_EDID_LIBS $QT_LIBS"], [AC_MSG_WARN([Qt5EdidSupport not found])])
+    PKG_CHECK_MODULES([QT_EVENTDISPATCHER], [Qt5EventDispatcherSupport], [QT_LIBS="$QT_EVENTDISPATCHER_LIBS $QT_LIBS"], [AC_MSG_WARN([Qt5EventDispatcherSupport not found])])
+    PKG_CHECK_MODULES([QT_FB], [Qt5FbSupport], [QT_LIBS="$QT_FB_LIBS $QT_LIBS"], [AC_MSG_WARN([Qt5FbSupport not found])])
+    PKG_CHECK_MODULES([QT_FONTDATABASE], [Qt5FontDatabaseSupport], [QT_LIBS="$QT_FONTDATABASE_LIBS $QT_LIBS"], [AC_MSG_WARN([Qt5FontDatabaseSupport not found])])
+    PKG_CHECK_MODULES([QT_THEME], [Qt5ThemeSupport], [QT_LIBS="$QT_THEME_LIBS $QT_LIBS"], [AC_MSG_WARN([Qt5ThemeSupport not found])])
+    if test x$TARGET_OS = xwindows; then
+      PKG_CHECK_MODULES([QT_WINDOWSUIAUTOMATION], [Qt5WindowsUIAutomationSupport], [QT_LIBS="$QT_WINDOWSUIAUTOMATION_LIBS $QT_LIBS"], [AC_MSG_WARN([Qt5WindowsUIAutomationSupport not found])])
+    fi
+  fi
+  ])
 ])
 
 dnl Internal. Find paths necessary for linking qt static plugins
