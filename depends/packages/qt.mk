@@ -24,6 +24,7 @@ $(package)_patches += memory_resource.patch
 $(package)_patches += utc_from_string_no_optimize.patch
 $(package)_patches += windows_lto.patch
 $(package)_patches += darwin_no_libm.patch
+$(package)_patches += fix_xcb_static_libs.patch
 $(package)_patches += CVE-2025-4211-qtbase-5.15.patch
 $(package)_patches += CVE-2025-5455-qtbase-5.15.patch
 $(package)_patches += CVE-2025-30348-qtbase-5.15.patch
@@ -265,6 +266,7 @@ define $(package)_config_cmds
   export PKG_CONFIG_PATH=$(host_prefix)/share/pkgconfig && \
   export OPENSSL_LIBS='-L$(host_prefix)/lib -lssl -lcrypto -lpthread -ldl' && \
   export OPENSSL_PREFIX='$(host_prefix)' && \
+  export XCB_LIBS='-L$(host_prefix)/lib -lxcb -lXau' && \
   cd qtbase && \
   ./configure -top-level $($(package)_config_opts) -I $(host_prefix)/include -L $(host_prefix)/lib
 endef
