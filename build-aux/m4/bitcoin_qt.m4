@@ -130,6 +130,8 @@ AC_DEFUN([BITCOIN_QT_CONFIGURE],[
       if test x$TARGET_OS = xwindows; then
         dnl Linking against wtsapi32 is required. See Bitcoin Core #17749
         AX_CHECK_LINK_FLAG([-lwtsapi32], [QT_LIBS="$QT_LIBS -lwtsapi32"], [AC_MSG_ERROR([could not link against -lwtsapi32])])
+        dnl Linking against dwmapi is required for Desktop Window Manager functions
+        AX_CHECK_LINK_FLAG([-ldwmapi], [QT_LIBS="$QT_LIBS -ldwmapi"], [AC_MSG_ERROR([could not link against -ldwmapi])])
         _BITCOIN_QT_CHECK_STATIC_PLUGINS([Q_IMPORT_PLUGIN(QWindowsIntegrationPlugin)],[-lqwindows])
         AC_DEFINE(QT_QPA_PLATFORM_WINDOWS, 1, [Define this symbol if the qt platform is windows])
       elif test x$TARGET_OS = xlinux; then
