@@ -341,7 +341,6 @@ dnl Internal. Check Qt static libs with PKG_CHECK_MODULES.
 dnl Outputs: QT_LIBS is prepended.
 AC_DEFUN([_BITCOIN_QT_CHECK_STATIC_LIBS], [
   m4_ifdef([PKG_CHECK_MODULES],[
-  if test x$use_pkgconfig = xyes; then
     PKG_CHECK_MODULES([QT_ACCESSIBILITY], [Qt5AccessibilitySupport], [QT_LIBS="$QT_ACCESSIBILITY_LIBS $QT_LIBS"], [AC_MSG_WARN([Qt5AccessibilitySupport not found])])
     PKG_CHECK_MODULES([QT_DEVICEDISCOVERY], [Qt5DeviceDiscoverySupport], [QT_LIBS="$QT_DEVICEDISCOVERY_LIBS $QT_LIBS"], [AC_MSG_WARN([Qt5DeviceDiscoverySupport not found])])
     PKG_CHECK_MODULES([QT_EDID], [Qt5EdidSupport], [QT_LIBS="$QT_EDID_LIBS $QT_LIBS"], [AC_MSG_WARN([Qt5EdidSupport not found])])
@@ -352,7 +351,6 @@ AC_DEFUN([_BITCOIN_QT_CHECK_STATIC_LIBS], [
     if test x$TARGET_OS = xwindows; then
       PKG_CHECK_MODULES([QT_WINDOWSUIAUTOMATION], [Qt5WindowsUIAutomationSupport], [QT_LIBS="$QT_WINDOWSUIAUTOMATION_LIBS $QT_LIBS"], [AC_MSG_WARN([Qt5WindowsUIAutomationSupport not found])])
     fi
-  fi
   ])
 ])
 
