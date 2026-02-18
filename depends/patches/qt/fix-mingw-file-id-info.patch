@@ -1,0 +1,16 @@
+--- a/qtbase/src/corelib/io/qfilesystemengine_win.cpp
++++ b/qtbase/src/corelib/io/qfilesystemengine_win.cpp
+@@ -607,11 +607,13 @@ QString QFileSystemEngine::owner(const QFileSystemEntry &entry, QAbstractFileSy
+ #if !defined(QT_NO_LIBRARY)
+ typedef DWORD (WINAPI *PtrGetFinalPathNameByHandleW)(HANDLE, LPWSTR, DWORD, DWORD);
+ static PtrGetFinalPathNameByHandleW ptrGetFinalPathNameByHandleW = 0;
++#if !defined(FILE_ID_INFO)
+ typedef struct _FILE_ID_INFO {
+     ULONGLONG VolumeSerialNumber;
+     FILE_ID_128 FileId;
+ } FILE_ID_INFO, *PFILE_ID_INFO;
+ typedef BOOL (WINAPI *PtrGetFileInformationByHandleEx)(HANDLE, FILE_INFO_BY_HANDLE_CLASS, LPVOID, DWORD);
++#endif
+ static PtrGetFileInformationByHandleEx ptrGetFileInformationByHandleEx = 0;
+ #endif
+

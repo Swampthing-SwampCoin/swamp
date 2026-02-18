@@ -20,6 +20,8 @@
 #include "util.h"
 #include "wallet/wallet.h"
 
+using namespace boost::placeholders;
+
 #include <QColor>
 #include <QDateTime>
 #include <QDebug>

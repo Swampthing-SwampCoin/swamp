@@ -9,12 +9,21 @@ define $(package)_set_vars
 $(package)_config_opts=--disable-shared --enable-cxx --disable-replication
 $(package)_config_opts_mingw32=--enable-mingw
 $(package)_config_opts_linux=--with-pic
+$(package)_config_opts_aarch64_linux=--with-pic
 $(package)_cxxflags=-std=c++11
 endef
 
 define $(package)_preprocess_cmds
   sed -i.old 's/__atomic_compare_exchange/__atomic_compare_exchange_db/' dbinc/atomic.h && \
-  sed -i.old 's/atomic_init/atomic_init_db/' dbinc/atomic.h mp/mp_region.c mp/mp_mvcc.c mp/mp_fget.c mutex/mut_method.c mutex/mut_tas.c
+  sed -i.old 's/atomic_init/atomic_init_db/' dbinc/atomic.h mp/mp_region.c mp/mp_mvcc.c mp/mp_fget.c mutex/mut_method.c mutex/mut_tas.c && \
+  if echo "$(host)" | grep -q "aarch64"; then \
+    echo "Updating config files for ARM64 support..." && \
+    $(build_DOWNLOAD) dist/config.guess.tmp 'https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess;hb=HEAD' && \
+    $(build_DOWNLOAD) dist/config.sub.tmp 'https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.sub;hb=HEAD' && \
+    mv -f dist/config.guess.tmp dist/config.guess && \
+    mv -f dist/config.sub.tmp dist/config.sub && \
+    chmod +x dist/config.guess dist/config.sub; \
+  fi
 endef
 
 define $(package)_config_cmds

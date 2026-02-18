@@ -1,0 +1,26 @@
+Disable D3D11 RHI backend to avoid dxgi1_3.h dependency
+
+The mingw-w64 headers in Ubuntu 18.04 don't include dxgi1_3.h,
+which is required by Qt's D3D11 RHI backend. Remove the D3D11
+backend from the build.
+
+--- a/qtbase/src/gui/rhi/rhi.pri
++++ b/qtbase/src/gui/rhi/rhi.pri
+@@ -30,16 +30,6 @@ SOURCES += \
+     rhi/qrhinull.cpp \
+     rhi/qrhiprofiler.cpp
+
+-win32 {
+-    SOURCES += \
+-        rhi/qrhid3d11.cpp
+-
+-    HEADERS += \
+-        rhi/qrhid3d11_p_p.h
+-
+-    LIBS += -ld3d11 -ldxgi -ldxguid
+-}
+-
+ qtConfig(opengl) {
+     SOURCES += \
+         rhi/qrhigles2.cpp
+
