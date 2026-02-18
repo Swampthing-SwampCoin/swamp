@@ -8,8 +8,6 @@
 #include "config/swamp-config.h"
 #endif
 
-#include <QNetworkProxy>
-
 #include "optionsmodel.h"
 
 #include "bitcoinunits.h"
@@ -30,6 +28,7 @@
 #include "privatesend-client.h"
 #endif
 
+#include <QtNetwork/QNetworkProxy>
 #include <QSettings>
 #include <QStringList>
 
