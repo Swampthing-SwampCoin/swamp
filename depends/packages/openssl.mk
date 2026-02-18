@@ -24,8 +24,13 @@ $(package)_config_opts_x86_64_mingw32=mingw64
 $(package)_config_opts_i686_mingw32=mingw
 endef
 
+define $(package)_fetch_cmds
+$(call fetch_file,$(package),$($(package)_download_path),$($(package)_download_file),$($(package)_file_name),$($(package)_sha256_hash)) || \
+$(call fetch_file,$(package),$($(package)_fallback_download_path),$($(package)_download_file),$($(package)_file_name),$($(package)_sha256_hash))
+endef
+
 define $(package)_preprocess_cmds
-  sed -i.old "/define DATE/d" util/mkbuildinf.pl
+  sed -i.old 's/my $$date = .*/my $$date = "";/' util/mkbuildinf.pl
 endef
 
 define $(package)_config_cmds
