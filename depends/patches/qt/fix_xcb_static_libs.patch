@@ -1,6 +1,6 @@
 --- a/qtbase/src/gui/configure.json
 +++ b/qtbase/src/gui/configure.json
-@@ -362,7 +362,7 @@
+@@ -590,7 +590,7 @@
              "headers": "xcb/xcb.h",
              "sources": [
                  { "type": "pkgConfig", "args": "xcb >= 1.11" },
