@@ -239,6 +239,7 @@ define $(package)_preprocess_cmds
   patch -p1 -i $($(package)_patch_dir)/guix_cross_lib_path.patch && \
   patch -p1 -i $($(package)_patch_dir)/windows_lto.patch && \
   patch -p1 -i $($(package)_patch_dir)/darwin_no_libm.patch && \
+  patch -p1 -i $($(package)_patch_dir)/fix_xcb_static_libs.patch && \
   patch -p1 -i $($(package)_patch_dir)/CVE-2025-4211-qtbase-5.15.patch && \
   patch -p1 -i $($(package)_patch_dir)/CVE-2025-5455-qtbase-5.15.patch && \
   patch -p1 -i $($(package)_patch_dir)/CVE-2025-30348-qtbase-5.15.patch && \
