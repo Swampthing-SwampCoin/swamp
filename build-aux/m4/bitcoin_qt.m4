@@ -370,7 +370,8 @@ AC_DEFUN([_BITCOIN_QT_FIND_STATIC_PLUGINS],[
       fi
      m4_ifdef([PKG_CHECK_MODULES],[
      if test x$use_pkgconfig = xyes; then
-       PKG_CHECK_MODULES([QTPLATFORM], [Qt5PlatformSupport], [QT_LIBS="$QTPLATFORM_LIBS $QT_LIBS"])
+       dnl Qt5PlatformSupport was removed in Qt 5.15, check for it but don't fail if not found
+       PKG_CHECK_MODULES([QTPLATFORM], [Qt5PlatformSupport], [QT_LIBS="$QTPLATFORM_LIBS $QT_LIBS"], [:])
        if test x$TARGET_OS = xlinux; then
          PKG_CHECK_MODULES([X11XCB], [x11-xcb], [QT_LIBS="$X11XCB_LIBS $QT_LIBS"])
          if ${PKG_CONFIG} --exists "Qt5Core >= 5.5" 2>/dev/null; then
