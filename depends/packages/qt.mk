@@ -239,6 +239,7 @@ define $(package)_preprocess_cmds
   patch -p1 -i $($(package)_patch_dir)/guix_cross_lib_path.patch && \
   patch -p1 -i $($(package)_patch_dir)/windows_lto.patch && \
   patch -p1 -i $($(package)_patch_dir)/darwin_no_libm.patch && \
+  if [ "$(host_os)" = "linux" ]; then patch -p1 -i $($(package)_patch_dir)/fix_xcb_static_libs.patch; fi && \
   patch -p1 -i $($(package)_patch_dir)/CVE-2025-4211-qtbase-5.15.patch && \
   patch -p1 -i $($(package)_patch_dir)/CVE-2025-5455-qtbase-5.15.patch && \
   patch -p1 -i $($(package)_patch_dir)/CVE-2025-30348-qtbase-5.15.patch && \
@@ -258,10 +259,6 @@ define $(package)_preprocess_cmds
   echo "!host_build: QMAKE_LFLAGS     += $($(package)_ldflags)" >> qtbase/mkspecs/common/gcc-base.conf && \
   sed -i.old "s|QMAKE_CC                = \$$$$\$$$${CROSS_COMPILE}clang|QMAKE_CC                = $($(package)_cc)|" qtbase/mkspecs/common/clang.conf && \
   sed -i.old "s|QMAKE_CXX               = \$$$$\$$$${CROSS_COMPILE}clang++|QMAKE_CXX               = $($(package)_cxx)|" qtbase/mkspecs/common/clang.conf
-endef
-
-define $(package)_preprocess_cmds_linux
-  patch -p1 -i $($(package)_patch_dir)/fix_xcb_static_libs.patch
 endef
 
 ifeq ($(host_os),mingw32)
