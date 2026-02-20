@@ -20,8 +20,8 @@ define $(package)_preprocess_cmds
     echo "Updating config files for ARM64 support..." && \
     $(build_DOWNLOAD) dist/config.guess.tmp 'https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess;hb=HEAD' && \
     $(build_DOWNLOAD) dist/config.sub.tmp 'https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.sub;hb=HEAD' && \
-    mv dist/config.guess.tmp dist/config.guess && \
-    mv dist/config.sub.tmp dist/config.sub && \
+    mv -f dist/config.guess.tmp dist/config.guess && \
+    mv -f dist/config.sub.tmp dist/config.sub && \
     chmod +x dist/config.guess dist/config.sub; \
   fi
 endef
