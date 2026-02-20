@@ -15,21 +15,19 @@ endef
 
 define $(package)_preprocess_cmds
   sed -i.old 's/__atomic_compare_exchange/__atomic_compare_exchange_db/' dbinc/atomic.h && \
-  sed -i.old 's/atomic_init/atomic_init_db/' dbinc/atomic.h mp/mp_region.c mp/mp_mvcc.c mp/mp_fget.c mutex/mut_method.c mutex/mut_tas.c
-endef
-
-define $(package)_preprocess_cmds_aarch64_linux
-  sed -i.old 's/__atomic_compare_exchange/__atomic_compare_exchange_db/' dbinc/atomic.h && \
   sed -i.old 's/atomic_init/atomic_init_db/' dbinc/atomic.h mp/mp_region.c mp/mp_mvcc.c mp/mp_fget.c mutex/mut_method.c mutex/mut_tas.c && \
-  (curl -sL -o dist/config.guess 'https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess;hb=HEAD' 2>/dev/null || \
-   wget -q -O dist/config.guess 'https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess;hb=HEAD' 2>/dev/null || \
-   cp /usr/share/misc/config.guess dist/config.guess 2>/dev/null || \
-   echo "ERROR: Cannot update config.guess for ARM64 support" >&2) && \
-  (curl -sL -o dist/config.sub 'https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.sub;hb=HEAD' 2>/dev/null || \
-   wget -q -O dist/config.sub 'https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.sub;hb=HEAD' 2>/dev/null || \
-   cp /usr/share/misc/config.sub dist/config.sub 2>/dev/null || \
-   echo "ERROR: Cannot update config.sub for ARM64 support" >&2) && \
-  chmod +x dist/config.guess dist/config.sub
+  if echo "$(host)" | grep -q "aarch64"; then \
+    echo "Updating config files for ARM64 support..." && \
+    (curl -sL -o dist/config.guess 'https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess;hb=HEAD' 2>/dev/null || \
+     wget -q -O dist/config.guess 'https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess;hb=HEAD' 2>/dev/null || \
+     cp /usr/share/misc/config.guess dist/config.guess 2>/dev/null || \
+     (echo "ERROR: Cannot update config.guess for ARM64 support" >&2 && false)) && \
+    (curl -sL -o dist/config.sub 'https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.sub;hb=HEAD' 2>/dev/null || \
+     wget -q -O dist/config.sub 'https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.sub;hb=HEAD' 2>/dev/null || \
+     cp /usr/share/misc/config.sub dist/config.sub 2>/dev/null || \
+     (echo "ERROR: Cannot update config.sub for ARM64 support" >&2 && false)) && \
+    chmod +x dist/config.guess dist/config.sub; \
+  fi
 endef
 
 define $(package)_config_cmds
