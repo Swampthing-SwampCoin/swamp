@@ -296,10 +296,9 @@ endef
 
 define $(package)_postprocess_cmds
   rm -rf native/mkspecs/ native/lib/ lib/cmake/ && \
-  rm -f lib/lib*.la
-endef
-
-define $(package)_postprocess_cmds_linux
-  sed -i.old 's/-lxcb-image/-lxcb-image -lxcb-util/' lib/pkgconfig/Qt5XcbQpa.pc && \
-  sed -i.old 's/-lfontconfig/-lfontconfig -lexpat/' lib/pkgconfig/Qt5XcbQpa.pc
+  rm -f lib/lib*.la && \
+  if [ "$(host_os)" = "linux" ]; then \
+    sed -i.old 's/-lxcb-image/-lxcb-image -lxcb-util/' lib/pkgconfig/Qt5XcbQpa.pc && \
+    sed -i.old 's/-lfontconfig/-lfontconfig -lexpat/' lib/pkgconfig/Qt5XcbQpa.pc; \
+  fi
 endef
