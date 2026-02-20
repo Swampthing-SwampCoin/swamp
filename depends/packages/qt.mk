@@ -178,11 +178,11 @@ $(package)_config_opts_mingw32 = -no-opengl
 $(package)_config_opts_mingw32 += -no-dbus
 $(package)_config_opts_mingw32 += -no-freetype
 $(package)_config_opts_mingw32 += -xplatform win32-g++
-$(package)_config_opts_mingw32 += "QMAKE_CFLAGS = '$($(package)_cflags) $($(package)_cppflags)'"
+$(package)_config_opts_mingw32 += "QMAKE_CFLAGS = '$($(package)_cflags) $($(package)_cppflags) -I$(host_prefix)/include'"
 $(package)_config_opts_mingw32 += "QMAKE_CXX = '$($(package)_cxx)'"
-$(package)_config_opts_mingw32 += "QMAKE_CXXFLAGS = '$($(package)_cxxflags) $($(package)_cppflags)'"
+$(package)_config_opts_mingw32 += "QMAKE_CXXFLAGS = '$($(package)_cxxflags) $($(package)_cppflags) -I$(host_prefix)/include'"
 $(package)_config_opts_mingw32 += "QMAKE_LINK = '$($(package)_cxx)'"
-$(package)_config_opts_mingw32 += "QMAKE_LFLAGS = '$($(package)_ldflags)'"
+$(package)_config_opts_mingw32 += "QMAKE_LFLAGS = '$($(package)_ldflags) -L$(host_prefix)/lib'"
 $(package)_config_opts_mingw32 += "QMAKE_LIB = '$($(package)_ar) rc'"
 $(package)_config_opts_mingw32 += -device-option CROSS_COMPILE="$(host)-"
 $(package)_config_opts_mingw32 += -pch
@@ -278,8 +278,10 @@ define $(package)_config_cmds_mingw32
   export PKG_CONFIG_PATH=$(host_prefix)/share/pkgconfig && \
   export OPENSSL_LIBS='-L$(host_prefix)/lib -lssl -lcrypto -lws2_32 -lgdi32 -lcrypt32' && \
   export OPENSSL_PREFIX='$(host_prefix)' && \
+  export OPENSSL_INCDIR='$(host_prefix)/include' && \
+  export OPENSSL_LIBDIR='$(host_prefix)/lib' && \
   cd qtbase && \
-  ./configure -top-level $($(package)_config_opts) -I $(host_prefix)/include -L $(host_prefix)/lib
+  ./configure -top-level $($(package)_config_opts) -I $(host_prefix)/include -L $(host_prefix)/lib -openssl-linked -- -DOPENSSL_ROOT_DIR=$(host_prefix)
 endef
 
 define $(package)_build_cmds
