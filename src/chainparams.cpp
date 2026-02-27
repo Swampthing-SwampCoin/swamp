@@ -169,6 +169,13 @@ public:
         vSeeds.push_back(CDNSSeedData("161.97.182.56", "161.97.182.56"));
         vSeeds.push_back(CDNSSeedData("31.223.40.180", "31.223.40.180"));
 
+        // IPv6 seed nodes
+        vSeeds.push_back(CDNSSeedData("2a0d:8142:0:53::", "2a0d:8142:0:53::"));
+        vSeeds.push_back(CDNSSeedData("2605:6f01:2000:b0::76a5:2be0", "2605:6f01:2000:b0::76a5:2be0"));
+        vSeeds.push_back(CDNSSeedData("2605:6f01:2000:b0::7a65:f45b", "2605:6f01:2000:b0::7a65:f45b"));
+        vSeeds.push_back(CDNSSeedData("2605:6f01:2000:b7::c7ff:96f2", "2605:6f01:2000:b7::c7ff:96f2"));
+        vSeeds.push_back(CDNSSeedData("2605:6f01:2000:b7::52e8", "2605:6f01:2000:b7::52e8"));
+
 
         // Swamp addresses start with 's'
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1,73);
