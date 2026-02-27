@@ -161,7 +161,7 @@ void CActiveMasternode::ManageStateInitial(CConnman& connman)
 
     if(!fFoundLocal) {
         nState = ACTIVE_MASTERNODE_NOT_CAPABLE;
-        strNotCapableReason = "Can't detect valid external address. Please consider using the externalip configuration option if problem persists. Make sure to use IPv4 address only.";
+        strNotCapableReason = "Can't detect valid external address. Please consider using the externalip configuration option if problem persists. IPv4 and IPv6 addresses are supported.";
         LogPrintf("CActiveMasternode::ManageStateInitial -- %s: %s\n", GetStateString(), strNotCapableReason);
         return;
     }
