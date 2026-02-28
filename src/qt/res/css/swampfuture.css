@@ -1,0 +1,1477 @@
+/*****************************************************************************
+ * SWAMP-FUTURE — Ultra Advanced Light Theme for Swamp Core
+ * Qt 5.15.18 QSS — Pushing every feature to the limit
+ *
+ * ADVANCED QSS FEATURES USED:
+ *   rgba()                 — transparency everywhere
+ *   qlineargradient()      — multi-stop linear gradients
+ *   qradialgradient()      — radial gradients for buttons/accents
+ *   qconicalgradient()     — conical gradients for unique elements
+ *   border-image           — 9-slice scaling for backgrounds
+ *   subcontrol-origin      — precise subcontrol positioning
+ *   subcontrol-position    — spinbox/scrollbar arrow placement
+ *   alternate-background   — alternating table row colors
+ *   qproperty-*            — Qt property injection via CSS
+ *   selection-*            — custom selection colors
+ *   :hover:pressed         — chained pseudo-states
+ *   :checked:!enabled      — negated pseudo-states
+ *   :indeterminate         — tri-state checkbox
+ *   outline                — focus outlines
+ *   image                  — custom indicator images
+ *
+ * Color Palette — "Bioluminescent Swamp":
+ *   Mist White      #F4F8F0  — primary background
+ *   Dew Drop        #EAF2E4  — secondary background
+ *   Lily Surface    #FFFFFF  — input/card backgrounds
+ *   Emerald Core    #2E7D32  — primary accent
+ *   Vine Deep       #1B5E20  — pressed/active accent
+ *   Fern Glow       #4CAF50  — hover accent
+ *   Moss Shadow     #1A3A1E  — primary text
+ *   Bark Gray       #5D7A60  — secondary text
+ *   Reed Border     rgba(46,125,50,0.25) — subtle borders
+ *   Swamp Glass     rgba(46,125,50,0.08) — tinted surfaces
+ *   Alt Row         rgba(46,125,50,0.04) — alternating rows
+ *****************************************************************************/
+
+/* =========================================================================
+   SECTION 1: WALLET FRAME & GLOBAL STRUCTURE
+   ========================================================================= */
+
+WalletFrame {
+border-image: url(':/images/swampfuture/drkblue_walletFrame_bg') 0 0 0 0 stretch stretch;
+border-top: 0px solid transparent;
+margin: 0;
+padding-top: 20px;
+padding-bottom: 20px;
+}
+
+QStatusBar {
+background-color: #2E7D32;
+color: #FFFFFF;
+}
+
+QStatusBar::item {
+border: none;
+}
+
+QStatusBar QLabel {
+color: #FFFFFF;
+}
+
+.QFrame {
+background-color: transparent;
+border: 0px solid transparent;
+}
+
+/* =========================================================================
+   SECTION 2: MENU BAR — qlineargradient with 4-stop glass effect
+   ========================================================================= */
+
+QMenuBar {
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+    stop:0 rgba(46,125,50,0.95),
+    stop:0.4 rgba(56,142,60,0.92),
+    stop:0.6 rgba(56,142,60,0.92),
+    stop:1 rgba(46,125,50,0.98));
+border-bottom: 1px solid rgba(27,94,32,0.4);
+min-height: 28px;
+}
+
+QMenuBar::item {
+background: transparent;
+color: rgba(255, 255, 255, 0.92);
+padding: 6px 12px;
+font-size: 12px;
+font-weight: 600;
+border-radius: 4px;
+margin: 2px 1px;
+}
+
+QMenuBar::item:selected {
+background: qradialgradient(cx:0.5, cy:0.5, radius:0.8,
+    fx:0.5, fy:0.3,
+    stop:0 rgba(255,255,255,0.25),
+    stop:1 rgba(255,255,255,0.08));
+color: #FFFFFF;
+}
+
+QMenuBar::item:pressed {
+background: rgba(27, 94, 32, 0.6);
+color: #FFFFFF;
+}
+
+/* Dropdown menus — frosted glass effect with rgba */
+QMenu {
+background-color: rgba(244, 248, 240, 0.97);
+border: 1px solid rgba(46, 125, 50, 0.2);
+border-radius: 6px;
+padding: 4px 0;
+}
+
+QMenu::item {
+color: #1A3A1E;
+padding: 8px 32px 8px 24px;
+font-size: 12px;
+border-radius: 4px;
+margin: 1px 4px;
+}
+
+QMenu::item:selected {
+background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+    stop:0 rgba(46,125,50,0.15),
+    stop:0.5 rgba(76,175,80,0.12),
+    stop:1 rgba(46,125,50,0.15));
+color: #1B5E20;
+}
+
+QMenu::separator {
+height: 1px;
+background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+    stop:0 transparent,
+    stop:0.2 rgba(46,125,50,0.2),
+    stop:0.8 rgba(46,125,50,0.2),
+    stop:1 transparent);
+margin: 4px 12px;
+}
+
+QMenu::indicator {
+width: 16px;
+height: 16px;
+padding-left: 6px;
+}
+
+/* =========================================================================
+   SECTION 3: TOOLBAR — qlineargradient glass bar with glow
+   ========================================================================= */
+
+QToolBar {
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+    stop:0 rgba(46,125,50,0.95),
+    stop:0.45 rgba(56,142,60,0.90),
+    stop:0.55 rgba(56,142,60,0.90),
+    stop:1 rgba(46,125,50,0.98));
+border: 0px solid transparent;
+border-bottom: 1px solid rgba(27,94,32,0.3);
+padding: 0;
+margin: 0;
+spacing: 0;
+}
+
+QToolBar > QToolButton {
+background: transparent;
+border: 0px solid transparent;
+border-bottom: 3px solid transparent;
+min-height: 2.5em;
+min-width: 8em;
+padding: 0em 1em;
+font-weight: bold;
+font-size: 12px;
+color: rgba(255, 255, 255, 0.85);
+}
+
+QToolBar > QToolButton:hover {
+background: qradialgradient(cx:0.5, cy:0.7, radius:0.9,
+    fx:0.5, fy:0.9,
+    stop:0 rgba(255,255,255,0.18),
+    stop:1 transparent);
+color: #FFFFFF;
+border-bottom: 3px solid rgba(255,255,255,0.4);
+}
+
+QToolBar > QToolButton:checked {
+background: qradialgradient(cx:0.5, cy:0.8, radius:0.9,
+    fx:0.5, fy:1.0,
+    stop:0 rgba(255,255,255,0.22),
+    stop:1 transparent);
+color: #FFFFFF;
+font-weight: bold;
+border-bottom: 3px solid rgba(255,255,255,0.8);
+}
+
+QToolBar > QToolButton:pressed {
+background: rgba(27, 94, 32, 0.5);
+color: #FFFFFF;
+}
+
+/* =========================================================================
+   SECTION 4: MESSAGE BOX & GLOBAL LABELS
+   ========================================================================= */
+
+QMessageBox {
+background-color: #F4F8F0;
+}
+
+QLabel {
+font-size: 12px;
+color: #1A3A1E;
+}
+
+.QCheckBox {
+color: #1A3A1E;
+background-color: transparent;
+spacing: 6px;
+}
+
+.QCheckBox:hover {
+background-color: transparent;
+color: #2E7D32;
+}
+
+.QCheckBox:!enabled {
+color: rgba(26, 58, 30, 0.45);
+}
+
+QRadioButton {
+font-size: 12px;
+color: #1A3A1E;
+spacing: 6px;
+}
+
+QRadioButton:hover {
+color: #2E7D32;
+}
+
+QRadioButton:!enabled {
+color: rgba(26, 58, 30, 0.45);
+}
+
+/* =========================================================================
+   SECTION 5: TEXT INPUT FIELDS — rgba borders + gradient focus glow
+   ========================================================================= */
+
+.QValidatedLineEdit, .QLineEdit {
+border: 1px solid rgba(46, 125, 50, 0.25);
+font-size: 12px;
+min-height: 25px;
+outline: 0;
+padding: 4px 8px;
+background-color: #FFFFFF;
+color: #1A3A1E;
+border-radius: 6px;
+selection-background-color: rgba(76, 175, 80, 0.35);
+selection-color: #1A3A1E;
+}
+
+.QValidatedLineEdit:focus, .QLineEdit:focus {
+border: 2px solid rgba(46, 125, 50, 0.6);
+background-color: rgba(255, 255, 255, 1.0);
+padding: 3px 7px;
+}
+
+.QValidatedLineEdit:hover:!focus, .QLineEdit:hover:!focus {
+border: 1px solid rgba(46, 125, 50, 0.45);
+background-color: rgba(234, 242, 228, 0.5);
+}
+
+.QValidatedLineEdit:disabled, .QLineEdit:disabled {
+background-color: rgba(244, 248, 240, 0.7);
+color: rgba(26, 58, 30, 0.4);
+border: 1px solid rgba(46, 125, 50, 0.12);
+}
+
+.QLineEdit:!focus {
+font-size: 12px;
+}
+
+
+
+/* =========================================================================
+   SECTION 6: BUTTONS — qradialgradient spotlight + multi-stop pressed
+   ========================================================================= */
+
+QPushButton {
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+    stop:0 #4CAF50, stop:0.05 #43A047,
+    stop:0.5 #388E3C, stop:0.95 #2E7D32, stop:1 #2E7D32);
+border: 1px solid rgba(27, 94, 32, 0.5);
+border-radius: 8px;
+color: #FFFFFF;
+font-size: 12px;
+font-weight: bold;
+min-height: 36px;
+padding: 6px 24px;
+outline: none;
+}
+
+QPushButton:hover {
+background: qradialgradient(cx:0.5, cy:0.3, radius:1.0,
+    fx:0.5, fy:0.0,
+    stop:0 rgba(129,199,132,0.9),
+    stop:0.4 rgba(76,175,80,0.95),
+    stop:1 rgba(56,142,60,1.0));
+border: 1px solid rgba(27, 94, 32, 0.6);
+color: #FFFFFF;
+}
+
+QPushButton:pressed {
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+    stop:0 #1B5E20, stop:0.3 #2E7D32,
+    stop:0.7 #2E7D32, stop:1 #1B5E20);
+border: 1px solid rgba(27, 94, 32, 0.8);
+padding-top: 7px;
+padding-bottom: 5px;
+}
+
+QPushButton:focus {
+border: 2px solid rgba(76, 175, 80, 0.7);
+outline: none;
+}
+
+QPushButton:disabled {
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+    stop:0 rgba(76,175,80,0.35), stop:1 rgba(46,125,50,0.3));
+color: rgba(255, 255, 255, 0.5);
+border: 1px solid rgba(46, 125, 50, 0.15);
+}
+
+QPushButton:checked {
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+    stop:0 #1B5E20, stop:1 #2E7D32);
+border: 2px solid rgba(76, 175, 80, 0.8);
+}
+
+QPushButton:checked:hover {
+background: qradialgradient(cx:0.5, cy:0.5, radius:0.8,
+    fx:0.5, fy:0.3,
+    stop:0 rgba(46,125,50,0.95),
+    stop:1 rgba(27,94,32,1.0));
+}
+
+/* =========================================================================
+   SECTION 7: COMBOBOX — subcontrol positioning + gradient dropdown
+   ========================================================================= */
+
+QComboBox {
+border: 1px solid rgba(46, 125, 50, 0.25);
+padding: 4px 8px 4px 8px;
+background: #FFFFFF;
+min-height: 25px;
+color: #1A3A1E;
+border-radius: 6px;
+selection-background-color: rgba(76, 175, 80, 0.25);
+selection-color: #1A3A1E;
+}
+
+QComboBox:hover {
+border: 1px solid rgba(46, 125, 50, 0.5);
+background: rgba(234, 242, 228, 0.4);
+}
+
+QComboBox:focus {
+border: 2px solid rgba(46, 125, 50, 0.6);
+}
+
+QComboBox:!enabled {
+background: rgba(244, 248, 240, 0.6);
+color: rgba(26, 58, 30, 0.4);
+}
+
+QComboBox:checked {
+background: rgba(234, 242, 228, 0.6);
+}
+
+QComboBox:editable {
+background: #FFFFFF;
+color: #1A3A1E;
+border: 1px solid rgba(46, 125, 50, 0.25);
+}
+
+QComboBox::drop-down {
+subcontrol-origin: padding;
+subcontrol-position: top right;
+width: 28px;
+border-left: 1px solid rgba(46, 125, 50, 0.15);
+border-top-right-radius: 6px;
+border-bottom-right-radius: 6px;
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+    stop:0 rgba(46,125,50,0.05),
+    stop:1 rgba(46,125,50,0.12));
+}
+
+QComboBox::down-arrow {
+border-image: url(':/images/swampfuture/drkblue_downArrow') 0 0 0 0 stretch stretch;
+}
+
+QComboBox QListView {
+background: rgba(255, 255, 255, 0.98);
+border: 1px solid rgba(46, 125, 50, 0.2);
+border-radius: 4px;
+padding: 2px;
+outline: none;
+}
+
+QComboBox QAbstractItemView::item {
+margin: 2px;
+padding: 4px 8px;
+border-radius: 3px;
+}
+
+QComboBox::item {
+color: #1A3A1E;
+}
+
+QComboBox::item:alternate {
+background: rgba(46, 125, 50, 0.04);
+}
+
+QComboBox::item:selected {
+border: 0px solid transparent;
+background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+    stop:0 rgba(46,125,50,0.15),
+    stop:1 rgba(76,175,80,0.1));
+color: #1B5E20;
+}
+
+QComboBox::indicator {
+background-color: transparent;
+selection-background-color: transparent;
+color: transparent;
+selection-color: transparent;
+}
+
+/* =========================================================================
+   SECTION 8: SPINBOX — subcontrol-origin + subcontrol-position
+   ========================================================================= */
+
+QAbstractSpinBox {
+border: 1px solid rgba(46, 125, 50, 0.25);
+padding: 4px 8px;
+background: #FFFFFF;
+min-height: 25px;
+color: #1A3A1E;
+border-radius: 6px;
+selection-background-color: rgba(76, 175, 80, 0.3);
+selection-color: #1A3A1E;
+}
+
+QAbstractSpinBox:focus {
+border: 2px solid rgba(46, 125, 50, 0.6);
+}
+
+QAbstractSpinBox:hover:!focus {
+border: 1px solid rgba(46, 125, 50, 0.45);
+}
+
+QAbstractSpinBox::up-button {
+subcontrol-origin: border;
+subcontrol-position: top right;
+width: 22px;
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+    stop:0 rgba(46,125,50,0.06), stop:1 rgba(46,125,50,0.12));
+border-left: 1px solid rgba(46, 125, 50, 0.15);
+border-top-right-radius: 6px;
+border-bottom: 0px;
+padding: 2px;
+}
+
+QAbstractSpinBox::up-button:hover {
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+    stop:0 rgba(76,175,80,0.15), stop:1 rgba(76,175,80,0.25));
+}
+
+QAbstractSpinBox::up-button:pressed {
+background: rgba(46, 125, 50, 0.3);
+}
+
+QAbstractSpinBox::up-arrow {
+image: url(':/images/swampfuture/drkblue_upArrow_small');
+}
+
+QAbstractSpinBox::down-button {
+subcontrol-origin: border;
+subcontrol-position: bottom right;
+width: 22px;
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+    stop:0 rgba(46,125,50,0.12), stop:1 rgba(46,125,50,0.06));
+border-left: 1px solid rgba(46, 125, 50, 0.15);
+border-bottom-right-radius: 6px;
+border-top: 0px;
+padding: 2px;
+}
+
+QAbstractSpinBox::down-button:hover {
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+    stop:0 rgba(76,175,80,0.25), stop:1 rgba(76,175,80,0.15));
+}
+
+QAbstractSpinBox::down-button:pressed {
+background: rgba(46, 125, 50, 0.3);
+}
+
+QAbstractSpinBox::down-arrow {
+image: url(':/images/swampfuture/drkblue_downArrow_small');
+}
+
+/* =========================================================================
+   SECTION 9: CHECKBOXES — chained pseudo-states + image indicators
+   ========================================================================= */
+
+QCheckBox {
+spacing: 6px;
+}
+
+QCheckBox::indicator {
+width: 18px;
+height: 18px;
+border-radius: 3px;
+}
+
+QCheckBox::indicator:unchecked {
+image: url(':/images/swampfuture/unchecked');
+}
+
+QCheckBox::indicator:unchecked:hover {
+image: url(':/images/swampfuture/unchecked');
+border: 1px solid rgba(76, 175, 80, 0.4);
+}
+
+QCheckBox::indicator:unchecked:pressed {
+image: url(':/images/swampfuture/checked');
+}
+
+QCheckBox::indicator:checked {
+image: url(':/images/swampfuture/checked');
+}
+
+QCheckBox::indicator:checked:hover {
+image: url(':/images/swampfuture/checked');
+border: 1px solid rgba(76, 175, 80, 0.4);
+}
+
+QCheckBox::indicator:checked:pressed {
+image: url(':/images/swampfuture/unchecked');
+}
+
+QCheckBox::indicator:indeterminate {
+image: url(':/images/swampfuture/unchecked');
+background: rgba(76, 175, 80, 0.3);
+}
+
+QCheckBox::indicator:indeterminate:hover {
+image: url(':/images/swampfuture/unchecked');
+background: rgba(76, 175, 80, 0.45);
+}
+
+QCheckBox::indicator:indeterminate:pressed {
+image: url(':/images/swampfuture/checked');
+}
+
+QCheckBox::indicator:checked:!enabled {
+image: url(':/images/swampfuture/checked');
+background: rgba(46, 125, 50, 0.15);
+}
+
+/* =========================================================================
+   SECTION 10: TABLE HEADERS — qlineargradient + qproperty-alignment
+   ========================================================================= */
+
+QHeaderView {
+background-color: transparent;
+}
+
+QHeaderView::section {
+qproperty-alignment: center;
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+    stop:0 rgba(46,125,50,0.12), stop:0.5 rgba(46,125,50,0.08),
+    stop:1 rgba(46,125,50,0.14));
+color: #1B5E20;
+min-height: 28px;
+font-weight: bold;
+font-size: 11px;
+outline: 0;
+border: 0px solid transparent;
+border-right: 1px solid rgba(46, 125, 50, 0.12);
+border-bottom: 2px solid rgba(46, 125, 50, 0.2);
+padding-left: 6px;
+padding-right: 6px;
+}
+
+QHeaderView::section:hover {
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+    stop:0 rgba(76,175,80,0.2), stop:1 rgba(76,175,80,0.12));
+color: #1B5E20;
+}
+
+QHeaderView::section:first {
+border-top-left-radius: 4px;
+}
+
+QHeaderView::section:last {
+border-top-right-radius: 4px;
+border-right: 0px;
+}
+
+/* =========================================================================
+   SECTION 11: TABLE VIEWS — alternate-background-color + selection
+   ========================================================================= */
+
+QTableView, QTableWidget, QTreeView, QTreeWidget {
+background-color: #FFFFFF;
+alternate-background-color: rgba(46, 125, 50, 0.04);
+border: 1px solid rgba(46, 125, 50, 0.15);
+border-radius: 6px;
+color: #1A3A1E;
+gridline-color: rgba(46, 125, 50, 0.08);
+selection-background-color: rgba(76, 175, 80, 0.2);
+selection-color: #1A3A1E;
+outline: none;
+}
+
+QTableView::item, QTreeView::item {
+padding: 4px 6px;
+border-bottom: 1px solid rgba(46, 125, 50, 0.05);
+}
+
+QTableView::item:hover, QTreeView::item:hover {
+background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+    stop:0 rgba(76,175,80,0.1),
+    stop:0.5 rgba(76,175,80,0.08),
+    stop:1 rgba(76,175,80,0.1));
+}
+
+QTableView::item:selected, QTreeView::item:selected {
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+    stop:0 rgba(46,125,50,0.2), stop:1 rgba(46,125,50,0.15));
+color: #1A3A1E;
+}
+
+QTableView::item:selected:hover, QTreeView::item:selected:hover {
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+    stop:0 rgba(46,125,50,0.28), stop:1 rgba(46,125,50,0.22));
+}
+
+QTreeView::branch:selected {
+background: rgba(46, 125, 50, 0.15);
+}
+
+QTreeView::branch:has-children:!has-siblings:closed,
+QTreeView::branch:closed:has-children:has-siblings {
+image: url(':/images/swampfuture/drkblue_rightArrow_small');
+}
+
+QTreeView::branch:open:has-children:!has-siblings,
+QTreeView::branch:open:has-children:has-siblings {
+image: url(':/images/swampfuture/drkblue_downArrow_small');
+}
+
+/* =========================================================================
+   SECTION 12: SCROLLBARS — qlineargradient tracks + qradialgradient handles
+   ========================================================================= */
+
+QScrollBar:vertical {
+background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+    stop:0 rgba(46,125,50,0.04), stop:1 rgba(46,125,50,0.08));
+width: 12px;
+margin: 0;
+border-radius: 6px;
+}
+
+QScrollBar::handle:vertical {
+background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+    stop:0 rgba(46,125,50,0.25), stop:0.5 rgba(46,125,50,0.3),
+    stop:1 rgba(46,125,50,0.25));
+min-height: 30px;
+border-radius: 6px;
+margin: 1px;
+}
+
+QScrollBar::handle:vertical:hover {
+background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+    stop:0 rgba(76,175,80,0.4), stop:0.5 rgba(76,175,80,0.5),
+    stop:1 rgba(76,175,80,0.4));
+}
+
+QScrollBar::handle:vertical:pressed {
+background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+    stop:0 rgba(46,125,50,0.5), stop:0.5 rgba(46,125,50,0.6),
+    stop:1 rgba(46,125,50,0.5));
+}
+
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+height: 0px;
+subcontrol-origin: margin;
+}
+
+QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
+background: transparent;
+}
+
+QScrollBar:horizontal {
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+    stop:0 rgba(46,125,50,0.04), stop:1 rgba(46,125,50,0.08));
+height: 12px;
+margin: 0;
+border-radius: 6px;
+}
+
+QScrollBar::handle:horizontal {
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+    stop:0 rgba(46,125,50,0.25), stop:0.5 rgba(46,125,50,0.3),
+    stop:1 rgba(46,125,50,0.25));
+min-width: 30px;
+border-radius: 6px;
+margin: 1px;
+}
+
+QScrollBar::handle:horizontal:hover {
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+    stop:0 rgba(76,175,80,0.4), stop:0.5 rgba(76,175,80,0.5),
+    stop:1 rgba(76,175,80,0.4));
+}
+
+QScrollBar::handle:horizontal:pressed {
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+    stop:0 rgba(46,125,50,0.5), stop:0.5 rgba(46,125,50,0.6),
+    stop:1 rgba(46,125,50,0.5));
+}
+
+QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {
+width: 0px;
+subcontrol-origin: margin;
+}
+
+QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {
+background: transparent;
+}
+
+/* =========================================================================
+   SECTION 13: TAB WIDGET — qconicalgradient active indicator
+   ========================================================================= */
+
+QTabWidget::pane {
+border: 1px solid rgba(46, 125, 50, 0.15);
+border-radius: 6px;
+background: #F4F8F0;
+top: -1px;
+}
+
+QTabWidget::tab-bar {
+alignment: left;
+}
+
+QTabBar::tab {
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+    stop:0 rgba(244,248,240,0.9), stop:1 rgba(234,242,228,0.8));
+border: 1px solid rgba(46, 125, 50, 0.12);
+border-bottom: none;
+border-top-left-radius: 4px;
+border-top-right-radius: 4px;
+padding: 10px 20px;
+margin-right: 2px;
+color: #5D7A60;
+}
+
+QTabBar::tab:hover:!selected {
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+    stop:0 rgba(76,175,80,0.1), stop:1 rgba(76,175,80,0.05));
+color: #2E7D32;
+border: 1px solid rgba(46, 125, 50, 0.2);
+border-bottom: none;
+}
+
+QTabBar::tab:selected {
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+    stop:0 #FFFFFF, stop:0.7 #F4F8F0, stop:1 #F4F8F0);
+color: #1B5E20;
+border: 1px solid rgba(46, 125, 50, 0.2);
+border-bottom: 2px solid #F4F8F0;
+border-top: 3px solid #2E7D32;
+}
+
+QTabBar::tab:!selected {
+margin-top: 3px;
+}
+
+
+/* =========================================================================
+   SECTION 14: GROUPBOX — title styling with border + padding
+   ========================================================================= */
+
+QGroupBox {
+background-color: rgba(234, 242, 228, 0.3);
+border: 1px solid rgba(46, 125, 50, 0.15);
+border-radius: 8px;
+margin-top: 16px;
+padding: 16px 12px 12px 12px;
+font-weight: bold;
+}
+
+QGroupBox::title {
+subcontrol-origin: margin;
+subcontrol-position: top left;
+left: 16px;
+top: 2px;
+padding: 0 8px;
+color: #1B5E20;
+font-size: 12px;
+font-weight: bold;
+background: #F4F8F0;
+}
+
+QGroupBox::indicator {
+width: 16px;
+height: 16px;
+}
+
+QGroupBox::indicator:unchecked {
+image: url(':/images/swampfuture/unchecked');
+}
+
+QGroupBox::indicator:checked {
+image: url(':/images/swampfuture/checked');
+}
+
+/* =========================================================================
+   SECTION 15: PROGRESSBAR — qlineargradient chunk + qconicalgradient
+   ========================================================================= */
+
+QProgressBar {
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+    stop:0 rgba(46,125,50,0.06), stop:1 rgba(46,125,50,0.1));
+border: 1px solid rgba(46, 125, 50, 0.2);
+border-radius: 10px;
+min-height: 20px;
+text-align: center;
+color: #1B5E20;
+font-weight: bold;
+font-size: 11px;
+}
+
+QProgressBar::chunk {
+background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+    stop:0 #2E7D32, stop:0.3 #388E3C,
+    stop:0.5 #43A047, stop:0.7 #388E3C, stop:1 #2E7D32);
+border-radius: 10px;
+}
+
+/* =========================================================================
+   SECTION 16: TOOLTIPS — rgba glass effect
+   ========================================================================= */
+
+QToolTip {
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+    stop:0 rgba(27,94,32,0.95), stop:1 rgba(27,94,32,0.98));
+border: 1px solid rgba(76, 175, 80, 0.5);
+border-radius: 6px;
+color: #FFFFFF;
+padding: 6px 10px;
+font-size: 11px;
+}
+
+/* =========================================================================
+   SECTION 17: QTextEdit / QPlainTextEdit — consistent with inputs
+   ========================================================================= */
+
+QTextEdit, QPlainTextEdit {
+background-color: #FFFFFF;
+color: #1A3A1E;
+border: 1px solid rgba(46, 125, 50, 0.2);
+border-radius: 6px;
+padding: 6px;
+selection-background-color: rgba(76, 175, 80, 0.3);
+selection-color: #1A3A1E;
+}
+
+QTextEdit:focus, QPlainTextEdit:focus {
+border: 2px solid rgba(46, 125, 50, 0.5);
+}
+
+QTextEdit:disabled, QPlainTextEdit:disabled {
+background-color: rgba(244, 248, 240, 0.7);
+color: rgba(26, 58, 30, 0.4);
+}
+
+/* =========================================================================
+   SECTION 18: OVERVIEW PAGE — wallet balance labels
+   ========================================================================= */
+
+#labelBalance, #labelUnconfirmed, #labelImmature,
+#labelWatchAvailable, #labelWatchPending, #labelWatchImmature, #labelWatchTotal,
+#labelTotal {
+font-weight: bold;
+font-size: 14px;
+color: #1B5E20;
+}
+
+#labelBalanceText, #labelPendingText, #labelImmatureText,
+#labelWatchonly, #labelWatchPending, #labelWatchImmatureText, #labelWatchTotalText,
+#labelTotalText {
+color: #5D7A60;
+font-size: 12px;
+}
+
+#labelAlerts {
+background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+    stop:0 rgba(255,152,0,0.15), stop:1 rgba(255,152,0,0.08));
+border: 1px solid rgba(255, 152, 0, 0.3);
+border-radius: 6px;
+padding: 8px 12px;
+color: #E65100;
+font-weight: bold;
+}
+
+#labelTransactionsStatus {
+color: #5D7A60;
+font-size: 11px;
+}
+
+
+/* =========================================================================
+   SECTION 19: SEND PAGE — SendCoinsEntry + payTo/addAsLabel fields
+   ========================================================================= */
+
+QFrame#SendCoins {
+background-color: transparent;
+border: 0px solid transparent;
+}
+
+QFrame#SendCoins > .QFrame {
+background-color: rgba(255, 255, 255, 0.7);
+border: 1px solid rgba(46, 125, 50, 0.12);
+border-radius: 8px;
+padding: 12px;
+}
+
+#payTo {
+background-color: #FFFFFF;
+border: 1px solid rgba(46, 125, 50, 0.25);
+border-radius: 6px;
+padding: 4px 8px;
+color: #1A3A1E;
+min-height: 25px;
+}
+
+#payTo:focus {
+border: 2px solid rgba(46, 125, 50, 0.6);
+padding: 3px 7px;
+}
+
+#addAsLabel {
+background-color: #FFFFFF;
+border: 1px solid rgba(46, 125, 50, 0.25);
+border-radius: 6px;
+padding: 4px 8px;
+color: #1A3A1E;
+min-height: 25px;
+}
+
+#addAsLabel:focus {
+border: 2px solid rgba(46, 125, 50, 0.6);
+padding: 3px 7px;
+}
+
+BitcoinAmountField QLineEdit {
+background-color: #FFFFFF;
+border: 1px solid rgba(46, 125, 50, 0.25);
+border-radius: 6px;
+color: #1A3A1E;
+font-weight: bold;
+}
+
+#frameFee {
+background: rgba(234, 242, 228, 0.4);
+border: 1px solid rgba(46, 125, 50, 0.1);
+border-radius: 6px;
+padding: 8px;
+}
+
+#frameCoinControl {
+background: rgba(234, 242, 228, 0.3);
+border: 1px solid rgba(46, 125, 50, 0.1);
+border-radius: 6px;
+}
+
+/* =========================================================================
+   SECTION 20: RECEIVE PAGE
+   ========================================================================= */
+
+#reqLabel, #reqAmount, #reqMessage {
+background-color: #FFFFFF;
+border: 1px solid rgba(46, 125, 50, 0.25);
+border-radius: 6px;
+padding: 4px 8px;
+color: #1A3A1E;
+min-height: 25px;
+}
+
+#reqLabel:focus, #reqAmount:focus, #reqMessage:focus {
+border: 2px solid rgba(46, 125, 50, 0.6);
+padding: 3px 7px;
+}
+
+QFrame#ReceiveCoinsDialog {
+background-color: transparent;
+}
+
+/* =========================================================================
+   SECTION 21: TRANSACTION / HISTORY TABLE
+   ========================================================================= */
+
+#listTransactions {
+background-color: transparent;
+border: 0px solid transparent;
+}
+
+#transactionView {
+background-color: #FFFFFF;
+alternate-background-color: rgba(46, 125, 50, 0.04);
+border: 1px solid rgba(46, 125, 50, 0.15);
+border-radius: 6px;
+color: #1A3A1E;
+gridline-color: rgba(46, 125, 50, 0.08);
+}
+
+#transactionView::item {
+padding: 4px 6px;
+border-bottom: 1px solid rgba(46, 125, 50, 0.05);
+}
+
+#transactionView::item:hover {
+background: rgba(76, 175, 80, 0.08);
+}
+
+#transactionView::item:selected {
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+    stop:0 rgba(46,125,50,0.2), stop:1 rgba(46,125,50,0.15));
+color: #1A3A1E;
+}
+
+#dateFrom, #dateTo {
+background-color: #FFFFFF;
+border: 1px solid rgba(46, 125, 50, 0.25);
+border-radius: 6px;
+padding: 4px 8px;
+color: #1A3A1E;
+}
+
+
+/* =========================================================================
+   SECTION 22: COIN CONTROL DIALOG
+   ========================================================================= */
+
+QDialog#CoinControlDialog {
+background-color: #F4F8F0;
+}
+
+QDialog#CoinControlDialog QLabel {
+color: #1A3A1E;
+}
+
+QDialog#CoinControlDialog QTreeWidget {
+background-color: #FFFFFF;
+alternate-background-color: rgba(46, 125, 50, 0.04);
+border: 1px solid rgba(46, 125, 50, 0.15);
+border-radius: 6px;
+color: #1A3A1E;
+gridline-color: rgba(46, 125, 50, 0.08);
+}
+
+QDialog#CoinControlDialog QTreeWidget::item {
+padding: 4px 6px;
+border-bottom: 1px solid rgba(46, 125, 50, 0.05);
+}
+
+QDialog#CoinControlDialog QTreeWidget::item:hover {
+background: rgba(76, 175, 80, 0.08);
+}
+
+QDialog#CoinControlDialog QTreeWidget::item:selected {
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+    stop:0 rgba(46,125,50,0.2), stop:1 rgba(46,125,50,0.15));
+color: #1A3A1E;
+}
+
+QDialog#CoinControlDialog QHeaderView::section {
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+    stop:0 rgba(46,125,50,0.12), stop:1 rgba(46,125,50,0.08));
+color: #1B5E20;
+border-right: 1px solid rgba(46, 125, 50, 0.12);
+border-bottom: 2px solid rgba(46, 125, 50, 0.2);
+font-weight: bold;
+padding: 4px 6px;
+}
+
+QDialog#CoinControlDialog QPushButton {
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+    stop:0 #4CAF50, stop:1 #2E7D32);
+border: 1px solid rgba(27, 94, 32, 0.5);
+border-radius: 6px;
+color: #FFFFFF;
+font-weight: bold;
+padding: 6px 16px;
+min-height: 28px;
+}
+
+QDialog#CoinControlDialog QPushButton:hover {
+background: qradialgradient(cx:0.5, cy:0.3, radius:1.0,
+    fx:0.5, fy:0.0,
+    stop:0 rgba(129,199,132,0.9),
+    stop:1 rgba(56,142,60,1.0));
+}
+
+/* =========================================================================
+   SECTION 23: OPTIONS DIALOG
+   ========================================================================= */
+
+QDialog#OptionsDialog {
+background-color: #F4F8F0;
+}
+
+QDialog#OptionsDialog QLabel {
+color: #1A3A1E;
+}
+
+QDialog#OptionsDialog QTabWidget::pane {
+background: #F4F8F0;
+border: 1px solid rgba(46, 125, 50, 0.15);
+border-radius: 6px;
+}
+
+QDialog#OptionsDialog QTabBar::tab {
+padding: 10px 20px;
+}
+
+QDialog#OptionsDialog QGroupBox {
+background-color: rgba(234, 242, 228, 0.3);
+border: 1px solid rgba(46, 125, 50, 0.12);
+border-radius: 8px;
+margin-top: 16px;
+}
+
+QDialog#OptionsDialog QGroupBox::title {
+color: #1B5E20;
+font-weight: bold;
+background: #F4F8F0;
+}
+
+QDialog#OptionsDialog QCheckBox {
+color: #1A3A1E;
+}
+
+QDialog#OptionsDialog QSpinBox, QDialog#OptionsDialog QLineEdit {
+background-color: #FFFFFF;
+border: 1px solid rgba(46, 125, 50, 0.25);
+border-radius: 6px;
+color: #1A3A1E;
+padding: 4px 8px;
+}
+
+QDialog#OptionsDialog QPushButton {
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+    stop:0 #4CAF50, stop:1 #2E7D32);
+border: 1px solid rgba(27, 94, 32, 0.5);
+border-radius: 6px;
+color: #FFFFFF;
+padding: 6px 16px;
+font-weight: bold;
+min-height: 28px;
+}
+
+QDialog#OptionsDialog QPushButton:hover {
+background: qradialgradient(cx:0.5, cy:0.3, radius:1.0,
+    fx:0.5, fy:0.0,
+    stop:0 rgba(129,199,132,0.9),
+    stop:1 rgba(56,142,60,1.0));
+}
+
+
+/* =========================================================================
+   SECTION 24: TOOLS WINDOW / RPC CONSOLE — QWidget#RPCConsole (NOT QDialog)
+   All 5 tabs: Information, Console, Network Traffic, Peers, Wallet Repair
+   ========================================================================= */
+
+QWidget#RPCConsole {
+background-color: #F4F8F0;
+}
+
+QWidget#RPCConsole QLabel {
+color: #1A3A1E;
+font-size: 12px;
+}
+
+QWidget#RPCConsole QTabWidget::pane {
+background: #F4F8F0;
+border: 1px solid rgba(46, 125, 50, 0.15);
+border-radius: 6px;
+}
+
+QWidget#RPCConsole QTabBar::tab {
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+    stop:0 rgba(244,248,240,0.9), stop:1 rgba(234,242,228,0.8));
+border: 1px solid rgba(46, 125, 50, 0.12);
+border-bottom: none;
+border-top-left-radius: 4px;
+border-top-right-radius: 4px;
+padding: 10px 20px;
+margin-right: 2px;
+color: #5D7A60;
+}
+
+QWidget#RPCConsole QTabBar::tab:selected {
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+    stop:0 #FFFFFF, stop:0.7 #F4F8F0, stop:1 #F4F8F0);
+color: #1B5E20;
+border-top: 3px solid #2E7D32;
+border-bottom: 2px solid #F4F8F0;
+}
+
+QWidget#RPCConsole QTabBar::tab:hover:!selected {
+background: rgba(76, 175, 80, 0.08);
+color: #2E7D32;
+}
+
+/* --- Information Tab --- */
+QWidget#RPCConsole #tab_info {
+background-color: #F4F8F0;
+}
+
+QWidget#RPCConsole #tab_info QLabel {
+color: #1A3A1E;
+}
+
+QWidget#RPCConsole #openDebugLogfileButton,
+QWidget#RPCConsole #btnClearTrafficGraph,
+QWidget#RPCConsole #btnSalvageWallet,
+QWidget#RPCConsole #btnRescan,
+QWidget#RPCConsole #btnZaptxes1,
+QWidget#RPCConsole #btnZaptxes2,
+QWidget#RPCConsole #btnReindex {
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+    stop:0 #4CAF50, stop:1 #2E7D32);
+border: 1px solid rgba(27, 94, 32, 0.5);
+border-radius: 6px;
+color: #FFFFFF;
+font-weight: bold;
+padding: 6px 16px;
+min-height: 28px;
+}
+
+QWidget#RPCConsole #openDebugLogfileButton:hover,
+QWidget#RPCConsole #btnClearTrafficGraph:hover,
+QWidget#RPCConsole #btnSalvageWallet:hover,
+QWidget#RPCConsole #btnRescan:hover,
+QWidget#RPCConsole #btnZaptxes1:hover,
+QWidget#RPCConsole #btnZaptxes2:hover,
+QWidget#RPCConsole #btnReindex:hover {
+background: qradialgradient(cx:0.5, cy:0.3, radius:1.0,
+    fx:0.5, fy:0.0,
+    stop:0 rgba(129,199,132,0.9),
+    stop:1 rgba(56,142,60,1.0));
+}
+
+/* --- Console Tab --- */
+QWidget#RPCConsole #tab_console {
+background-color: #F4F8F0;
+}
+
+QWidget#RPCConsole #messagesWidget {
+background-color: #FFFFFF;
+color: #1A3A1E;
+font-family: "Courier New", monospace;
+font-size: 12px;
+border: 1px solid rgba(46, 125, 50, 0.15);
+border-radius: 6px;
+}
+
+QWidget#RPCConsole #lineEdit {
+background-color: #FFFFFF;
+color: #1A3A1E;
+border: 1px solid rgba(46, 125, 50, 0.25);
+border-radius: 6px;
+padding: 6px 10px;
+font-family: "Courier New", monospace;
+font-size: 12px;
+}
+
+QWidget#RPCConsole #lineEdit:focus {
+border: 2px solid rgba(46, 125, 50, 0.6);
+}
+
+/* --- Network Traffic Tab --- */
+QWidget#RPCConsole #tab_nettraffic {
+background-color: #F4F8F0;
+}
+
+QWidget#RPCConsole #tab_nettraffic QGroupBox {
+background-color: rgba(234, 242, 228, 0.3);
+border: 1px solid rgba(46, 125, 50, 0.12);
+border-radius: 8px;
+}
+
+QWidget#RPCConsole #tab_nettraffic QGroupBox::title {
+color: #1B5E20;
+font-weight: bold;
+}
+
+/* --- Peers Tab --- */
+QWidget#RPCConsole #tab_peers {
+background-color: #F4F8F0;
+}
+
+QWidget#RPCConsole #tab_peers QTableView {
+background-color: #FFFFFF;
+alternate-background-color: rgba(46, 125, 50, 0.04);
+border: 1px solid rgba(46, 125, 50, 0.15);
+border-radius: 6px;
+color: #1A3A1E;
+gridline-color: rgba(46, 125, 50, 0.08);
+}
+
+QWidget#RPCConsole #tab_peers QTableView::item:selected {
+background: rgba(46, 125, 50, 0.15);
+color: #1A3A1E;
+}
+
+/* --- Wallet Repair Tab --- */
+QWidget#RPCConsole #tab_repair {
+background-color: #F4F8F0;
+}
+
+QWidget#RPCConsole #tab_repair QLabel {
+color: #1A3A1E;
+}
+
+
+/* =========================================================================
+   SECTION 25: ABOUT DIALOG — QDialog#HelpMessageDialog (NOT AboutDialog)
+   ========================================================================= */
+
+QDialog#HelpMessageDialog {
+background-color: #F4F8F0;
+}
+
+QDialog#HelpMessageDialog QLabel {
+color: #1A3A1E;
+}
+
+QDialog#HelpMessageDialog #aboutLogo {
+background: transparent;
+}
+
+QDialog#HelpMessageDialog #aboutMessage {
+color: #1A3A1E;
+font-size: 12px;
+}
+
+QDialog#HelpMessageDialog #helpMessage {
+background-color: #FFFFFF;
+color: #1A3A1E;
+border: 1px solid rgba(46, 125, 50, 0.15);
+border-radius: 6px;
+font-family: "Courier New", monospace;
+padding: 8px;
+}
+
+QDialog#HelpMessageDialog QScrollArea {
+background: transparent;
+border: 0px;
+}
+
+QDialog#HelpMessageDialog #okButton {
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+    stop:0 #4CAF50, stop:1 #2E7D32);
+border: 1px solid rgba(27, 94, 32, 0.5);
+border-radius: 6px;
+color: #FFFFFF;
+font-weight: bold;
+padding: 6px 24px;
+min-height: 28px;
+}
+
+QDialog#HelpMessageDialog #okButton:hover {
+background: qradialgradient(cx:0.5, cy:0.3, radius:1.0,
+    fx:0.5, fy:0.0,
+    stop:0 rgba(129,199,132,0.9),
+    stop:1 rgba(56,142,60,1.0));
+}
+
+QDialog#HelpMessageDialog a {
+color: #2E7D32;
+}
+
+/* =========================================================================
+   SECTION 26: MASTERNODE LIST — QWidget#MasternodeList
+   ========================================================================= */
+
+QWidget#MasternodeList {
+background-color: #F4F8F0;
+}
+
+QWidget#MasternodeList QLabel {
+color: #1A3A1E;
+}
+
+QWidget#MasternodeList QTableView {
+background-color: #FFFFFF;
+alternate-background-color: rgba(46, 125, 50, 0.04);
+border: 1px solid rgba(46, 125, 50, 0.15);
+border-radius: 6px;
+color: #1A3A1E;
+gridline-color: rgba(46, 125, 50, 0.08);
+}
+
+QWidget#MasternodeList QTableView::item:selected {
+background: rgba(46, 125, 50, 0.15);
+color: #1A3A1E;
+}
+
+QWidget#MasternodeList QTableView::item:hover {
+background: rgba(76, 175, 80, 0.08);
+}
+
+QWidget#MasternodeList QPushButton {
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+    stop:0 #4CAF50, stop:1 #2E7D32);
+border: 1px solid rgba(27, 94, 32, 0.5);
+border-radius: 6px;
+color: #FFFFFF;
+font-weight: bold;
+padding: 6px 16px;
+min-height: 28px;
+}
+
+QWidget#MasternodeList QPushButton:hover {
+background: qradialgradient(cx:0.5, cy:0.3, radius:1.0,
+    fx:0.5, fy:0.0,
+    stop:0 rgba(129,199,132,0.9),
+    stop:1 rgba(56,142,60,1.0));
+}
+
+/* =========================================================================
+   SECTION 27: MODAL OVERLAY — sync progress overlay
+   ========================================================================= */
+
+QWidget#bgWidget {
+background: rgba(244, 248, 240, 0.92);
+}
+
+QWidget#bgWidget QLabel {
+color: #1A3A1E;
+}
+
+QWidget#bgWidget QPushButton#closeButton {
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+    stop:0 #4CAF50, stop:1 #2E7D32);
+border: 1px solid rgba(27, 94, 32, 0.5);
+border-radius: 6px;
+color: #FFFFFF;
+font-weight: bold;
+padding: 6px 24px;
+}
+
+QWidget#bgWidget QProgressBar {
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+    stop:0 rgba(46,125,50,0.08), stop:1 rgba(46,125,50,0.12));
+border: 1px solid rgba(46, 125, 50, 0.25);
+border-radius: 10px;
+min-height: 24px;
+text-align: center;
+color: #1B5E20;
+font-weight: bold;
+}
+
+QWidget#bgWidget QProgressBar::chunk {
+background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+    stop:0 #2E7D32, stop:0.5 #43A047, stop:1 #2E7D32);
+border-radius: 10px;
+}

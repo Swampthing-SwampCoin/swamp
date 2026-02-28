@@ -35,6 +35,13 @@ HelpMessageDialog::HelpMessageDialog(QWidget *parent, HelpMode helpMode) :
 {
     ui->setupUi(this);
 
+    // Apply stylesheet directly to ensure theming works
+    // even if parent stylesheet inheritance fails
+    QString styleSheet = GUIUtil::loadStyleSheet();
+    if (!styleSheet.isEmpty()) {
+        this->setStyleSheet(styleSheet);
+    }
+
     QString version = tr("Swamp Core") + " " + tr("version") + " " + QString::fromStdString(FormatFullVersion());
     /* On x86 add a bit specifier to the version so that users can distinguish between
      * 32 and 64 bit builds. On other architectures, 32/64 bit may be more ambigious.
