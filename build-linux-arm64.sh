@@ -15,7 +15,7 @@ cd ~
 rm -rf swamp
 git clone https://github.com/Swampthing-SwampCoin/swamp.git
 cd swamp
-git checkout 2.0.0.5-IPv6
+git checkout master
 
 # Build dependencies
 echo "Building dependencies..."
