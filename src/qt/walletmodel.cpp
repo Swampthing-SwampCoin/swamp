@@ -235,7 +235,6 @@ WalletModel::SendCoinsReturn WalletModel::prepareTransaction(WalletModelTransact
         return TransactionCreationFailed;
     }
 
-    QSet<QString> setAddress; // Used to detect duplicates
     int nAddresses = 0;
 
     // Pre-check input data for validity
@@ -275,7 +274,6 @@ WalletModel::SendCoinsReturn WalletModel::prepareTransaction(WalletModelTransact
             {
                 return InvalidAmount;
             }
-            setAddress.insert(rcp.address);
             ++nAddresses;
 
             CScript scriptPubKey = GetScriptForDestination(CBitcoinAddress(rcp.address.toStdString()).Get());
@@ -284,10 +282,6 @@ WalletModel::SendCoinsReturn WalletModel::prepareTransaction(WalletModelTransact
 
             total += rcp.amount;
         }
-    }
-    if(setAddress.size() != nAddresses)
-    {
-        return DuplicateAddress;
     }
 
     CAmount nBalance = getBalance(coinControl);
