@@ -146,7 +146,7 @@ void CActiveMasternode::ManageStateInitial(CConnman& connman)
         // If we have some peers, let's try to find our local address from one of them
         connman.ForEachNodeContinueIf(CConnman::AllNodes, [&fFoundLocal, &empty, this](CNode* pnode) {
             empty = false;
-            if (pnode->addr.IsIPv4())
+            if (pnode->addr.IsIPv4() || pnode->addr.IsIPv6())
                 fFoundLocal = GetLocal(service, &pnode->addr) && CMasternode::IsValidNetAddr(service);
             return !fFoundLocal;
         });
@@ -161,7 +161,7 @@ void CActiveMasternode::ManageStateInitial(CConnman& connman)
 
     if(!fFoundLocal) {
         nState = ACTIVE_MASTERNODE_NOT_CAPABLE;
-        strNotCapableReason = "Can't detect valid external address. Please consider using the externalip configuration option if problem persists. Make sure to use IPv4 address only.";
+        strNotCapableReason = "Can't detect valid external address. Please consider using the externalip configuration option if problem persists. IPv4 and IPv6 addresses are supported.";
         LogPrintf("CActiveMasternode::ManageStateInitial -- %s: %s\n", GetStateString(), strNotCapableReason);
         return;
     }

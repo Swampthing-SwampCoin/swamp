@@ -1,34 +1,51 @@
 package=zeromq
-$(package)_version=4.1.5
-$(package)_download_path=https://github.com/zeromq/zeromq4-1/releases/download/v$($(package)_version)/
+$(package)_version=4.3.5
+$(package)_download_path=https://github.com/zeromq/libzmq/releases/download/v$($(package)_version)/
 $(package)_file_name=$(package)-$($(package)_version).tar.gz
-$(package)_sha256_hash=04aac57f081ffa3a2ee5ed04887be9e205df3a7ddade0027460b8042432bdbcf
-$(package)_patches=9114d3957725acd34aa8b8d011585812f3369411.patch 9e6745c12e0b100cd38acecc16ce7db02905e27c.patch
+$(package)_sha256_hash=6653ef5910f17954861fe72332e68b03ca6e4d9c7160eb3a8de5a5a913bfab43
+$(package)_build_subdir=build
+$(package)_patches = remove_libstd_link.patch
+$(package)_patches += macos_mktemp_check.patch
+$(package)_patches += builtin_sha1.patch
+$(package)_patches += fix_have_windows.patch
+$(package)_patches += openbsd_kqueue_headers.patch
+$(package)_patches += cmake_minimum.patch
+$(package)_patches += cacheline_undefined.patch
+$(package)_patches += no_librt.patch
+$(package)_patches += fix_mingw_link.patch
 
 define $(package)_set_vars
-  $(package)_config_opts=--without-documentation --disable-shared --without-libsodium --disable-curve
-  $(package)_config_opts_linux=--with-pic
-  $(package)_cxxflags=-std=c++11
+  $(package)_config_opts := -DCMAKE_BUILD_TYPE=None -DWITH_DOCS=OFF -DWITH_LIBSODIUM=OFF
+  $(package)_config_opts += -DWITH_LIBBSD=OFF -DENABLE_CURVE=OFF -DENABLE_CPACK=OFF
+  $(package)_config_opts += -DBUILD_SHARED=OFF -DBUILD_TESTS=OFF -DZMQ_BUILD_TESTS=OFF
+  $(package)_config_opts += -DENABLE_DRAFTS=OFF -DZMQ_BUILD_TESTS=OFF
+  $(package)_config_opts_mingw32 += -DZMQ_WIN32_WINNT=0x0A00 -DZMQ_HAVE_IPC=OFF
 endef
 
 define $(package)_preprocess_cmds
-  patch -p1 < $($(package)_patch_dir)/9114d3957725acd34aa8b8d011585812f3369411.patch && \
-  patch -p1 < $($(package)_patch_dir)/9e6745c12e0b100cd38acecc16ce7db02905e27c.patch && \
-  ./autogen.sh
+  patch -p1 < $($(package)_patch_dir)/remove_libstd_link.patch && \
+  patch -p1 < $($(package)_patch_dir)/macos_mktemp_check.patch && \
+  patch -p1 < $($(package)_patch_dir)/builtin_sha1.patch && \
+  patch -p1 < $($(package)_patch_dir)/cacheline_undefined.patch && \
+  patch -p1 < $($(package)_patch_dir)/fix_have_windows.patch && \
+  patch -p1 < $($(package)_patch_dir)/openbsd_kqueue_headers.patch && \
+  patch -p1 < $($(package)_patch_dir)/cmake_minimum.patch && \
+  patch -p1 < $($(package)_patch_dir)/no_librt.patch && \
+  patch -p1 < $($(package)_patch_dir)/fix_mingw_link.patch
 endef
 
 define $(package)_config_cmds
-  $($(package)_autoconf)
+   $($(package)_cmake) ..
 endef
 
 define $(package)_build_cmds
-  $(MAKE) libzmq.la
+  $(MAKE)
 endef
 
 define $(package)_stage_cmds
-  $(MAKE) DESTDIR=$($(package)_staging_dir) install-libLTLIBRARIES install-includeHEADERS install-pkgconfigDATA
+  $(MAKE) DESTDIR=$($(package)_staging_dir) install
 endef
 
 define $(package)_postprocess_cmds
-  rm -rf bin share
+  rm -rf share
 endef

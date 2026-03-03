@@ -1,7 +1,7 @@
 // Copyright (c) 2010 Satoshi Nakamoto
 // Copyright (c) 2009-2014 The Bitcoin Core developers
 // Copyright (c) 2014-2018 The Dash Core developers 
-// Copyright (c) 2018-2018 The Swamp Core developers
+// Copyright (c) 2018-2026 The Swamp Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -95,10 +95,10 @@ public:
         consensus.vDeployments[Consensus::DEPLOYMENT_DIP0001].nThreshold = 3226; // 80% of 4032
 
         // The best chain should have at least this much work.
-        consensus.nMinimumChainWork = uint256S("0x0000000000000000000000000000000000000000000000000000000000000000");
+        consensus.nMinimumChainWork = uint256S("0x00000000000000000000000000000000000000000000000000000908d7675c60");
 
         // By default assume that the signatures in ancestors of this block are valid.
-        consensus.defaultAssumeValid = uint256S("0x000003fd1dff397d1be86183efd9e13f0316b5f5a3082bac91975a421bc43021");
+        consensus.defaultAssumeValid = uint256S("0x000001b1d1fcaadd0a6f8c2373e0b91ccc368bc5daafa8b9d8ef5919495efb61");
 
         /**
          * The message start string is designed to be unlikely to occur in normal data.
@@ -122,6 +122,14 @@ public:
         assert(genesis.hashMerkleRoot == uint256S("0xde4fe11d6d0c735a192d4e6eed593ad575ccd671ff4ff0d9188e347e067d028d"));
 
         vSeeds.clear();
+        // IPv6 seed nodes (tried first)
+        vSeeds.push_back(CDNSSeedData("2a0d:8142:0:53::", "2a0d:8142:0:53::"));
+        vSeeds.push_back(CDNSSeedData("2605:6f01:2000:b0::76a5:2be0", "2605:6f01:2000:b0::76a5:2be0"));
+        vSeeds.push_back(CDNSSeedData("2605:6f01:2000:b0::7a65:f45b", "2605:6f01:2000:b0::7a65:f45b"));
+        vSeeds.push_back(CDNSSeedData("2605:6f01:2000:b7::c7ff:96f2", "2605:6f01:2000:b7::c7ff:96f2"));
+        vSeeds.push_back(CDNSSeedData("2605:6f01:2000:b7::52e8", "2605:6f01:2000:b7::52e8"));
+
+        // IPv4 seed nodes
         vSeeds.push_back(CDNSSeedData("167.86.127.48", "167.86.127.48"));
         vSeeds.push_back(CDNSSeedData("207.180.198.37", "207.180.198.37"));
         vSeeds.push_back(CDNSSeedData("173.249.15.113", "173.249.15.113"));
@@ -195,14 +203,16 @@ public:
         nPoolMaxTransactions = 3;
         nFulfilledRequestExpireTime = 60*60; // fulfilled requests expire in 1 hour
         strSporkPubKey = "04825df8a146091cd7527a55a648cf1c23efb3cc25bed2029eaa17a606918be747b9afa29e08da4df312f8cfc9823fb3707635e8744000390574b40f28c0d509a9";
+        strSporkPubKeyNew = "04858d0b83030e13a4c6008ce6e854a75554e9eb2b80f4adaa38540232618c7b65a420cc8635666177a5a5742d6eaaa5c987ab2b825690f1b9fd2ab7ffbba5b811";
 
         checkpointData = (CCheckpointData) {
             boost::assign::map_list_of
             (     0, uint256S("0x000003fd1dff397d1be86183efd9e13f0316b5f5a3082bac91975a421bc43021"))
 			(100000, uint256S("0x0000038508708ac5387431ad5b53e439fb8b3e9ab2e6aae28e9573e5a19f4df8"))
-		        (200000, uint256S("0x000001a1593ab16e3c7d586594a9489b548e07fa94015d4b330431940408dbbc")),
-                1595325340, // * UNIX timestamp of last checkpoint block
-                200000,      // * total number of transactions between genesis and last checkpoint
+		        (200000, uint256S("0x000001a1593ab16e3c7d586594a9489b548e07fa94015d4b330431940408dbbc"))
+                (1520000, uint256S("0x000001b1d1fcaadd0a6f8c2373e0b91ccc368bc5daafa8b9d8ef5919495efb61")),
+                1772024106, // * UNIX timestamp of last checkpoint block
+                761660,     // * total number of transactions between genesis and last checkpoint
                             //   (the tx=... number in the SetBestChain debug.log lines)
                 708         // * estimated number of transactions per day after checkpoint
         };
@@ -312,6 +322,7 @@ public:
         nPoolMaxTransactions = 3;
         nFulfilledRequestExpireTime = 5*60; // fulfilled requests expire in 5 minutes
         strSporkPubKey = "04ee3e3feb1e780b98327ece9579ff24991b6b6294f4bf53435e5feeb40ba166cbf71dc2b074c2703fd757b54befbe363b18bf56ec5a51be08ea6e912301afd1f2";
+        strSporkPubKeyNew = "04858d0b83030e13a4c6008ce6e854a75554e9eb2b80f4adaa38540232618c7b65a420cc8635666177a5a5742d6eaaa5c987ab2b825690f1b9fd2ab7ffbba5b811";
 
         checkpointData = (CCheckpointData) {
             boost::assign::map_list_of
