@@ -123,6 +123,9 @@ struct masternode_info_t
     int64_t nTimeLastPaid = 0;
     int64_t nTimeLastPing = 0; //* not in CMN
     bool fInfoValid = false; //* not in CMN
+
+    // P2P connectivity tracking for phantom masternode detection
+    int64_t nLastP2PCheck = 0; //* not in CMN
 };
 
 //
@@ -164,6 +167,9 @@ public:
     bool fAllowMixingTx{};
     bool fUnitTest = false;
 
+    // P2P CONNECTIVITY TRACKING FOR PHANTOM MASTERNODE DETECTION
+    int64_t nLastSuccessfulConnection = 0;
+
     // KEEP TRACK OF GOVERNANCE ITEMS EACH MASTERNODE HAS VOTE UPON FOR RECALCULATION
     std::map<uint256, int> mapGovernanceObjectsVotedOn;
 
@@ -196,6 +202,7 @@ public:
         READWRITE(nPoSeBanHeight);
         READWRITE(fAllowMixingTx);
         READWRITE(fUnitTest);
+        READWRITE(nLastSuccessfulConnection);
         READWRITE(mapGovernanceObjectsVotedOn);
     }
 
@@ -261,6 +268,10 @@ public:
     void IncreasePoSeBanScore() { if(nPoSeBanScore < MASTERNODE_POSE_BAN_MAX_SCORE) nPoSeBanScore++; }
     void DecreasePoSeBanScore() { if(nPoSeBanScore > -MASTERNODE_POSE_BAN_MAX_SCORE) nPoSeBanScore--; }
     void PoSeBan() { nPoSeBanScore = MASTERNODE_POSE_BAN_MAX_SCORE; }
+
+    // P2P connectivity tracking for phantom masternode detection
+    void UpdateSuccessfulConnection() { nLastSuccessfulConnection = GetAdjustedTime(); }
+    bool HasRecentConnection(int nSeconds = 3600) { return (GetAdjustedTime() - nLastSuccessfulConnection) < nSeconds; }
 
     masternode_info_t GetInfo();
 

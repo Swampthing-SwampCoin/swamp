@@ -78,6 +78,7 @@ private:
     friend class CMasternodeSync;
     /// Find an entry
     CMasternode* Find(const COutPoint& outpoint);
+    CMasternode* Find(const CService& addr);
 
     bool GetMasternodeScores(const uint256& nBlockHash, score_pair_vec_t& vecMasternodeScoresRet, int nMinProtocol = 0);
 

@@ -277,6 +277,7 @@ masternode_info_t CMasternode::GetInfo()
     masternode_info_t info{*this};
     info.nTimeLastPing = lastPing.sigTime;
     info.fInfoValid = true;
+    info.nLastP2PCheck = nLastSuccessfulConnection;
     return info;
 }
 

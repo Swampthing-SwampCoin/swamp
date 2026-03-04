@@ -810,6 +810,59 @@ bool CMasternodePayments::ProcessBlock(int nBlockHeight, CConnman& connman)
 
     LogPrintf("CMasternodePayments::ProcessBlock -- Masternode found by GetNextMasternodeInQueueForPayment(): %s\n", mnInfo.vin.prevout.ToStringShort());
 
+    // SOLUTION 3: Verify P2P connectivity before voting (anti-phantom masternode measure)
+    // Check if we've successfully connected to this masternode recently (within 1 hour)
+    // This avoids hammering masternodes with connection attempts every block
+    CMasternode* pmn = mnodeman.Find(mnInfo.vin.prevout);
+    bool needsConnectivityCheck = true;
+
+    if(pmn != NULL && pmn->HasRecentConnection(3600)) {
+        // We've connected successfully within the last hour, skip the check
+        needsConnectivityCheck = false;
+        LogPrint("mnpayments", "CMasternodePayments::ProcessBlock -- Masternode %s has recent connection, skipping check\n",
+                 mnInfo.vin.prevout.ToStringShort());
+    }
+
+    if(needsConnectivityCheck) {
+        // Check if we already have an active connection to this masternode
+        CNode* pnode = connman.FindNode(mnInfo.addr);
+        bool alreadyConnected = (pnode != NULL);
+
+        if(!alreadyConnected) {
+            // Try to connect to the masternode to verify it's actually reachable
+            pnode = connman.ConnectNode(CAddress(mnInfo.addr, NODE_NETWORK), NULL, true);
+            if(pnode == NULL) {
+                LogPrintf("CMasternodePayments::ProcessBlock -- WARNING: Can't connect to masternode %s at %s, skipping vote (possible phantom masternode)\n",
+                          mnInfo.vin.prevout.ToStringShort(), mnInfo.addr.ToString());
+                return false;
+            }
+        }
+
+        // Wait briefly for protocol handshake to complete (VERSION/VERACK exchange)
+        // A real Swamp node will complete this in milliseconds
+        // A phantom node that just accepts TCP connections won't send VERSION/VERACK
+        if(!alreadyConnected) {
+            int nWaitAttempts = 0;
+            while(!pnode->fSuccessfullyConnected && nWaitAttempts < 50) {
+                MilliSleep(100); // Wait 100ms
+                nWaitAttempts++;
+            }
+
+            if(!pnode->fSuccessfullyConnected) {
+                LogPrintf("CMasternodePayments::ProcessBlock -- WARNING: Masternode %s at %s accepted TCP connection but failed protocol handshake, skipping vote (likely phantom masternode)\n",
+                          mnInfo.vin.prevout.ToStringShort(), mnInfo.addr.ToString());
+                return false;
+            }
+        }
+
+        // Successfully connected AND completed protocol handshake - update tracking
+        if(pmn != NULL) {
+            pmn->UpdateSuccessfulConnection();
+            LogPrint("mnpayments", "CMasternodePayments::ProcessBlock -- Successfully verified masternode %s with protocol handshake\n",
+                     mnInfo.vin.prevout.ToStringShort());
+        }
+    }
+
 
     CScript payee = GetScriptForDestination(mnInfo.pubKeyCollateralAddress.GetID());
 

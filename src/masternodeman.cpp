@@ -428,6 +428,16 @@ CMasternode* CMasternodeMan::Find(const COutPoint &outpoint)
     return it == mapMasternodes.end() ? NULL : &(it->second);
 }
 
+CMasternode* CMasternodeMan::Find(const CService &addr)
+{
+    LOCK(cs);
+    for (auto& mnpair : mapMasternodes) {
+        if (mnpair.second.addr == addr)
+            return &mnpair.second;
+    }
+    return NULL;
+}
+
 bool CMasternodeMan::Get(const COutPoint& outpoint, CMasternode& masternodeRet)
 {
     // Theses mutexes are recursive so double locking by the same thread is safe.
