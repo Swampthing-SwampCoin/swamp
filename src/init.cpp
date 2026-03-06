@@ -246,6 +246,8 @@ void PrepareShutdown()
     flatdb1.Dump(mnodeman);
     CFlatDB<CMasternodePayments> flatdb2("mnpayments.dat", "magicMasternodePaymentsCache");
     flatdb2.Dump(mnpayments);
+    CFlatDB<CMasternodePaymentHistory> flatdb2a("mnpaymenthistory.dat", "magicMasternodePaymentHistoryCache");
+    flatdb2a.Dump(mnpaymenthistory);
     CFlatDB<CGovernanceManager> flatdb3("governance.dat", "magicGovernanceCache");
     flatdb3.Dump(governance);
     CFlatDB<CNetFulfilledRequestManager> flatdb4("netfulfilled.dat", "magicFulfilledCache");
@@ -1994,6 +1996,13 @@ bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
         CFlatDB<CMasternodePayments> flatdb2(strDBName, "magicMasternodePaymentsCache");
         if(!flatdb2.Load(mnpayments)) {
             return InitError(_("Failed to load masternode payments cache from") + "\n" + (pathDB / strDBName).string());
+        }
+
+        strDBName = "mnpaymenthistory.dat";
+        uiInterface.InitMessage(_("Loading masternode payment history cache..."));
+        CFlatDB<CMasternodePaymentHistory> flatdb2a(strDBName, "magicMasternodePaymentHistoryCache");
+        if(!flatdb2a.Load(mnpaymenthistory)) {
+            return InitError(_("Failed to load masternode payment history cache from") + "\n" + (pathDB / strDBName).string());
         }
 
         strDBName = "governance.dat";

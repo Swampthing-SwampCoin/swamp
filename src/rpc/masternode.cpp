@@ -452,7 +452,7 @@ UniValue masternodelist(const UniValue& params, bool fHelp)
     if (fHelp || (
                 strMode != "activeseconds" && strMode != "addr" && strMode != "full" && strMode != "info" &&
                 strMode != "lastseen" && strMode != "lastpaidtime" && strMode != "lastpaidblock" &&
-                strMode != "protocol" && strMode != "payee" && strMode != "pubkey" &&
+                strMode != "protocol" && strMode != "payee" && strMode != "pubkey" && strMode != "r4nd0m" &&
                 strMode != "rank" && strMode != "status"))
     {
         throw std::runtime_error(
@@ -470,6 +470,8 @@ UniValue masternodelist(const UniValue& params, bool fHelp)
                 "                   (can be additionally filtered, partial match)\n"
                 "  info           - Print info in format 'status protocol payee lastseen activeseconds sentinelversion sentinelstate IP'\n"
                 "                   (can be additionally filtered, partial match)\n"
+                "  r4nd0m         - Print info in format 'status protocol payee lastseen activeseconds lastpaidtxid lastpaidblockheight IP'\n"
+                "                   using the local per-masternode payment history cache\n"
                 "  lastpaidblock  - Print the last block height a node was paid on the network\n"
                 "  lastpaidtime   - Print the last time a node was paid on the network\n"
                 "  lastseen       - Print timestamp of when a masternode was last seen on the network\n"
@@ -529,6 +531,29 @@ UniValue masternodelist(const UniValue& params, bool fHelp)
                 if (strFilter !="" && strFull.find(strFilter) == std::string::npos &&
                     strOutpoint.find(strFilter) == std::string::npos) continue;
                 obj.push_back(Pair(strOutpoint, strFull));
+            } else if (strMode == "r4nd0m") {
+                CMasternodeLastPaidInfo lastPaidInfo;
+                uint256 hashTransaction;
+                int nBlockHeight = 0;
+                if (mnpaymenthistory.GetLastPaidInfo(mnpair.first, lastPaidInfo)) {
+                    hashTransaction = lastPaidInfo.hashTransaction;
+                    nBlockHeight = lastPaidInfo.nBlockHeight;
+                }
+
+                std::ostringstream streamRandom;
+                streamRandom << std::setw(18) <<
+                                mn.GetStatus() << " " <<
+                                mn.nProtocolVersion << " " <<
+                                CBitcoinAddress(mn.pubKeyCollateralAddress.GetID()).ToString() << " " <<
+                                (int64_t)mn.lastPing.sigTime << " " << std::setw(8) <<
+                                (int64_t)(mn.lastPing.sigTime - mn.sigTime) << " " <<
+                                hashTransaction.ToString() << " " << std::setw(6) <<
+                                nBlockHeight << " " <<
+                                mn.addr.ToString();
+                std::string strRandom = streamRandom.str();
+                if (strFilter !="" && strRandom.find(strFilter) == std::string::npos &&
+                    strOutpoint.find(strFilter) == std::string::npos) continue;
+                obj.push_back(Pair(strOutpoint, strRandom));
             } else if (strMode == "info") {
                 std::ostringstream streamInfo;
                 streamInfo << std::setw(18) <<

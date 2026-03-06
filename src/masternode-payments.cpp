@@ -12,15 +12,104 @@
 #include "netfulfilledman.h"
 #include "spork.h"
 #include "util.h"
+#include "validation.h"
 
 #include <boost/lexical_cast.hpp>
 
 /** Object for who's going to get paid on which blocks */
 CMasternodePayments mnpayments;
+CMasternodePaymentHistory mnpaymenthistory;
 
 CCriticalSection cs_vecPayees;
 CCriticalSection cs_mapMasternodeBlocks;
 CCriticalSection cs_mapMasternodePaymentVotes;
+
+void CMasternodePaymentHistory::Clear()
+{
+    LOCK(cs);
+    mapScheduledPayments.clear();
+    mapLastPaid.clear();
+}
+
+void CMasternodePaymentHistory::RecordScheduledPayment(const COutPoint& outpoint, int nBlockHeight)
+{
+    LOCK(cs);
+    mapScheduledPayments[nBlockHeight] = outpoint;
+}
+
+bool CMasternodePaymentHistory::GetScheduledPayment(int nBlockHeight, COutPoint& outpointRet)
+{
+    LOCK(cs);
+    auto it = mapScheduledPayments.find(nBlockHeight);
+    if (it == mapScheduledPayments.end()) {
+        return false;
+    }
+
+    outpointRet = it->second;
+    return true;
+}
+
+void CMasternodePaymentHistory::RemoveScheduledPayment(int nBlockHeight)
+{
+    LOCK(cs);
+    mapScheduledPayments.erase(nBlockHeight);
+}
+
+void CMasternodePaymentHistory::RecordActualPayment(const COutPoint& outpoint, int nBlockHeight, const uint256& hashTransaction)
+{
+    LOCK(cs);
+    mapLastPaid[outpoint] = CMasternodeLastPaidInfo(nBlockHeight, hashTransaction);
+    mapScheduledPayments.erase(nBlockHeight);
+}
+
+bool CMasternodePaymentHistory::GetLastPaidInfo(const COutPoint& outpoint, CMasternodeLastPaidInfo& infoRet)
+{
+    LOCK(cs);
+    auto it = mapLastPaid.find(outpoint);
+    if (it == mapLastPaid.end()) {
+        return false;
+    }
+
+    infoRet = it->second;
+    return true;
+}
+
+std::string CMasternodePaymentHistory::ToString() const
+{
+    LOCK(cs);
+    std::ostringstream info;
+    info << "Scheduled: " << (int)mapScheduledPayments.size() << ", LastPaid: " << (int)mapLastPaid.size();
+    return info.str();
+}
+
+static bool GetMasternodePaymentTxId(const CBlockIndex* pindex, const COutPoint& outpoint, uint256& hashTransactionRet)
+{
+    if (!pindex || CSuperblockManager::IsSuperblockTriggered(pindex->nHeight)) {
+        return false;
+    }
+
+    masternode_info_t mnInfo;
+    if (!mnodeman.GetMasternodeInfo(outpoint, mnInfo)) {
+        return false;
+    }
+
+    CBlock block;
+    if (!ReadBlockFromDisk(block, pindex, Params().GetConsensus()) || block.vtx.empty()) {
+        return false;
+    }
+
+    CScript payee = GetScriptForDestination(mnInfo.pubKeyCollateralAddress.GetID());
+    CAmount nMasternodePayment = GetMasternodePayment(pindex->nHeight, block.vtx[0].GetValueOut());
+
+    BOOST_FOREACH(const CTxOut& txout, block.vtx[0].vout) {
+        if (txout.scriptPubKey == payee && txout.nValue == nMasternodePayment) {
+            hashTransactionRet = block.vtx[0].GetHash();
+            return true;
+        }
+    }
+
+    return false;
+}
 
 /**
 * IsBlockValueValid
@@ -1021,7 +1110,24 @@ void CMasternodePayments::UpdatedBlockTip(const CBlockIndex *pindex, CConnman& c
     nCachedBlockHeight = pindex->nHeight;
     LogPrint("mnpayments", "CMasternodePayments::UpdatedBlockTip -- nCachedBlockHeight=%d\n", nCachedBlockHeight);
 
+    COutPoint outpointScheduled;
+    if (mnpaymenthistory.GetScheduledPayment(nCachedBlockHeight, outpointScheduled)) {
+        uint256 hashTransaction;
+        if (GetMasternodePaymentTxId(pindex, outpointScheduled, hashTransaction)) {
+            mnpaymenthistory.RecordActualPayment(outpointScheduled, nCachedBlockHeight, hashTransaction);
+        } else {
+            mnpaymenthistory.RemoveScheduledPayment(nCachedBlockHeight);
+        }
+    }
+
     int nFutureBlock = nCachedBlockHeight + 10;
+
+    int nCount = 0;
+    masternode_info_t mnInfo;
+    if (masternodeSync.IsMasternodeListSynced() &&
+        mnodeman.GetNextMasternodeInQueueForPayment(nFutureBlock, true, nCount, mnInfo)) {
+        mnpaymenthistory.RecordScheduledPayment(mnInfo.vin.prevout, nFutureBlock);
+    }
 
     CheckPreviousBlockVotes(nFutureBlock - 1);
     ProcessBlock(nFutureBlock, connman);

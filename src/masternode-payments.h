@@ -16,6 +16,7 @@
 class CMasternodePayments;
 class CMasternodePaymentVote;
 class CMasternodeBlockPayees;
+class CMasternodePaymentHistory;
 
 static const int MNPAYMENTS_SIGNATURES_REQUIRED         = 6;
 static const int MNPAYMENTS_SIGNATURES_TOTAL            = 10;
@@ -32,6 +33,7 @@ extern CCriticalSection cs_mapMasternodeBlocks;
 extern CCriticalSection cs_mapMasternodePayeeVotes;
 
 extern CMasternodePayments mnpayments;
+extern CMasternodePaymentHistory mnpaymenthistory;
 
 /// TODO: all 4 functions do not belong here really, they should be refactored/moved somewhere (main.cpp ?)
 bool IsBlockValueValid(const CBlock& block, int nBlockHeight, CAmount blockReward, std::string &strErrorRet);
@@ -157,6 +159,58 @@ public:
     bool IsVerified() { return !vchSig.empty(); }
     void MarkAsNotVerified() { vchSig.clear(); }
 
+    std::string ToString() const;
+};
+
+class CMasternodeLastPaidInfo
+{
+public:
+    int nBlockHeight;
+    uint256 hashTransaction;
+
+    CMasternodeLastPaidInfo() :
+        nBlockHeight(0),
+        hashTransaction()
+        {}
+
+    CMasternodeLastPaidInfo(int nBlockHeightIn, const uint256& hashTransactionIn) :
+        nBlockHeight(nBlockHeightIn),
+        hashTransaction(hashTransactionIn)
+        {}
+
+    ADD_SERIALIZE_METHODS;
+
+    template <typename Stream, typename Operation>
+    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
+        READWRITE(nBlockHeight);
+        READWRITE(hashTransaction);
+    }
+};
+
+class CMasternodePaymentHistory
+{
+private:
+    mutable CCriticalSection cs;
+
+    std::map<int, COutPoint> mapScheduledPayments;
+    std::map<COutPoint, CMasternodeLastPaidInfo> mapLastPaid;
+
+public:
+    ADD_SERIALIZE_METHODS;
+
+    template <typename Stream, typename Operation>
+    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
+        LOCK(cs);
+        READWRITE(mapScheduledPayments);
+        READWRITE(mapLastPaid);
+    }
+
+    void Clear();
+    void RecordScheduledPayment(const COutPoint& outpoint, int nBlockHeight);
+    bool GetScheduledPayment(int nBlockHeight, COutPoint& outpointRet);
+    void RemoveScheduledPayment(int nBlockHeight);
+    void RecordActualPayment(const COutPoint& outpoint, int nBlockHeight, const uint256& hashTransaction);
+    bool GetLastPaidInfo(const COutPoint& outpoint, CMasternodeLastPaidInfo& infoRet);
     std::string ToString() const;
 };
 
