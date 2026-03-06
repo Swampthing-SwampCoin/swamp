@@ -211,6 +211,7 @@ public:
     void RemoveScheduledPayment(int nBlockHeight);
     void RecordActualPayment(const COutPoint& outpoint, int nBlockHeight, const uint256& hashTransaction);
     bool GetLastPaidInfo(const COutPoint& outpoint, CMasternodeLastPaidInfo& infoRet);
+    void CheckAndRemove();
     std::string ToString() const;
 };
 

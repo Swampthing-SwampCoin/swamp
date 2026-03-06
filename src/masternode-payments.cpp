@@ -74,6 +74,26 @@ bool CMasternodePaymentHistory::GetLastPaidInfo(const COutPoint& outpoint, CMast
     return true;
 }
 
+void CMasternodePaymentHistory::CheckAndRemove()
+{
+    int nChainHeight = 0;
+    {
+        LOCK(cs_main);
+        if (chainActive.Tip()) {
+            nChainHeight = chainActive.Height();
+        }
+    }
+
+    LOCK(cs);
+    for (auto it = mapScheduledPayments.begin(); it != mapScheduledPayments.end();) {
+        if (it->first <= nChainHeight) {
+            it = mapScheduledPayments.erase(it);
+        } else {
+            ++it;
+        }
+    }
+}
+
 std::string CMasternodePaymentHistory::ToString() const
 {
     LOCK(cs);
