@@ -448,44 +448,6 @@ bool CMasternodePayments::GetBlockPayee(int nBlockHeight, CScript& payee)
     return false;
 }
 
-bool CMasternodePayments::GetBlockPayeeAndWinner(int nBlockHeight, CScript& payeeRet, COutPoint& winnerOutpointRet)
-{
-    LOCK(cs_mapMasternodeBlocks);
-
-    if(!mapMasternodeBlocks.count(nBlockHeight)){
-        return false;
-    }
-
-    if(!mapMasternodeBlocks[nBlockHeight].GetBestPayee(payeeRet)) {
-        return false;
-    }
-
-    // Determine which specific masternode should have been paid at this block height
-    // by recalculating the payment queue for that historical block
-    int nCount = 0;
-    masternode_info_t mnInfo;
-
-    if(mnodeman.GetNextMasternodeInQueueForPayment(nBlockHeight, true, nCount, mnInfo)) {
-        // Verify that the payee address matches what was actually paid
-        CScript expectedPayee = GetScriptForDestination(mnInfo.pubKeyCollateralAddress.GetID());
-        if(expectedPayee == payeeRet) {
-            winnerOutpointRet = mnInfo.vin.prevout;
-            return true;
-        }
-    }
-
-    // Fallback: if we can't determine the specific winner from the queue,
-    // try to find any masternode with this payee address
-    // This handles edge cases where the masternode list has changed
-    masternode_info_t mnInfoFallback;
-    if(mnodeman.GetMasternodeInfo(payeeRet, mnInfoFallback)) {
-        winnerOutpointRet = mnInfoFallback.vin.prevout;
-        return true;
-    }
-
-    return false;
-}
-
 // Is this masternode scheduled to get paid soon?
 // -- Only look ahead up to 8 blocks to allow for propagation of the latest 2 blocks of votes
 bool CMasternodePayments::IsScheduled(CMasternode& mn, int nNotBlockHeight)
@@ -563,27 +525,6 @@ bool CMasternodeBlockPayees::GetBestPayee(CScript& payeeRet)
     BOOST_FOREACH(CMasternodePayee& payee, vecPayees) {
         if (payee.GetVoteCount() > nVotes) {
             payeeRet = payee.GetPayee();
-            nVotes = payee.GetVoteCount();
-        }
-    }
-
-    return (nVotes > -1);
-}
-
-bool CMasternodeBlockPayees::GetBestPayeeAndVotes(CScript& payeeRet, std::vector<uint256>& voteHashesRet)
-{
-    LOCK(cs_vecPayees);
-
-    if(!vecPayees.size()) {
-        LogPrint("mnpayments", "CMasternodeBlockPayees::GetBestPayeeAndVotes -- ERROR: couldn't find any payee\n");
-        return false;
-    }
-
-    int nVotes = -1;
-    BOOST_FOREACH(CMasternodePayee& payee, vecPayees) {
-        if (payee.GetVoteCount() > nVotes) {
-            payeeRet = payee.GetPayee();
-            voteHashesRet = payee.GetVoteHashes();
             nVotes = payee.GetVoteCount();
         }
     }
