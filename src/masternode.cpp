@@ -318,22 +318,31 @@ void CMasternode::UpdateLastPaid(const CBlockIndex *pindex, int nMaxBlocksToScan
     LOCK(cs_mapMasternodeBlocks);
 
     for (int i = 0; BlockReading && BlockReading->nHeight > nBlockLastPaid && i < nMaxBlocksToScanBack; i++) {
-        if(mnpayments.mapMasternodeBlocks.count(BlockReading->nHeight) &&
-            mnpayments.mapMasternodeBlocks[BlockReading->nHeight].HasPayeeWithVotes(mnpayee, 2))
+        if(mnpayments.mapMasternodeBlocks.count(BlockReading->nHeight))
         {
-            CBlock block;
-            if(!ReadBlockFromDisk(block, BlockReading, Params().GetConsensus())) // shouldn't really happen
-                continue;
+            // NEW: Get the specific masternode outpoint that won the payment
+            CScript payee;
+            COutPoint winnerOutpoint;
 
-            CAmount nMasternodePayment = GetMasternodePayment(BlockReading->nHeight, block.vtx[0].GetValueOut());
+            if(mnpayments.GetBlockPayeeAndWinner(BlockReading->nHeight, payee, winnerOutpoint)) {
+                // Only update if THIS specific masternode was the winner
+                if(winnerOutpoint == vin.prevout) {
+                    // Verify the payment is actually in the block
+                    CBlock block;
+                    if(!ReadBlockFromDisk(block, BlockReading, Params().GetConsensus())) // shouldn't really happen
+                        continue;
 
-            BOOST_FOREACH(CTxOut txout, block.vtx[0].vout)
-                if(mnpayee == txout.scriptPubKey && nMasternodePayment == txout.nValue) {
-                    nBlockLastPaid = BlockReading->nHeight;
-                    nTimeLastPaid = BlockReading->nTime;
-                    LogPrint("masternode", "CMasternode::UpdateLastPaidBlock -- searching for block with payment to %s -- found new %d\n", vin.prevout.ToStringShort(), nBlockLastPaid);
-                    return;
+                    CAmount nMasternodePayment = GetMasternodePayment(BlockReading->nHeight, block.vtx[0].GetValueOut());
+
+                    BOOST_FOREACH(CTxOut txout, block.vtx[0].vout)
+                        if(payee == txout.scriptPubKey && nMasternodePayment == txout.nValue) {
+                            nBlockLastPaid = BlockReading->nHeight;
+                            nTimeLastPaid = BlockReading->nTime;
+                            LogPrint("masternode", "CMasternode::UpdateLastPaidBlock -- searching for block with payment to %s -- found new %d\n", vin.prevout.ToStringShort(), nBlockLastPaid);
+                            return;
+                        }
                 }
+            }
         }
 
         if (BlockReading->pprev == NULL) { assert(BlockReading); break; }

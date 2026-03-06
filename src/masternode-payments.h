@@ -99,6 +99,7 @@ public:
 
     void AddPayee(const CMasternodePaymentVote& vote);
     bool GetBestPayee(CScript& payeeRet);
+    bool GetBestPayeeAndVotes(CScript& payeeRet, std::vector<uint256>& voteHashesRet);
     bool HasPayeeWithVotes(const CScript& payeeIn, int nVotesReq);
 
     bool IsTransactionValid(const CTransaction& txNew);
@@ -204,6 +205,7 @@ public:
     void CheckAndRemove();
 
     bool GetBlockPayee(int nBlockHeight, CScript& payee);
+    bool GetBlockPayeeAndWinner(int nBlockHeight, CScript& payeeRet, COutPoint& winnerOutpointRet);
     bool IsTransactionValid(const CTransaction& txNew, int nBlockHeight);
     bool IsScheduled(CMasternode& mn, int nNotBlockHeight);
 
