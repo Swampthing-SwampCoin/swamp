@@ -32,6 +32,7 @@ extern CCriticalSection cs_mapMasternodeBlocks;
 extern CCriticalSection cs_mapMasternodePayeeVotes;
 
 extern CMasternodePayments mnpayments;
+extern bool fMasternodePhantomCheck;
 
 /// TODO: all 4 functions do not belong here really, they should be refactored/moved somewhere (main.cpp ?)
 bool IsBlockValueValid(const CBlock& block, int nBlockHeight, CAmount blockReward, std::string &strErrorRet);
@@ -183,6 +184,19 @@ public:
     std::map<COutPoint, int> mapMasternodesLastVote;
     std::map<COutPoint, int> mapMasternodesDidNotVote;
 
+    // Track masternodes vetoed from payment voting due to connectivity issues
+    struct VetoedMasternodeInfo {
+        COutPoint outpoint;
+        CService addr;
+        int64_t nTimeVetoed;
+        std::string strReason;
+
+        VetoedMasternodeInfo() : nTimeVetoed(0) {}
+        VetoedMasternodeInfo(COutPoint outpointIn, CService addrIn, int64_t nTimeIn, std::string reasonIn) :
+            outpoint(outpointIn), addr(addrIn), nTimeVetoed(nTimeIn), strReason(reasonIn) {}
+    };
+    std::map<COutPoint, VetoedMasternodeInfo> mapVetoedMasternodes;
+
     CMasternodePayments() : nStorageCoeff(1.25), nMinBlocksToStore(5000) {}
 
     ADD_SERIALIZE_METHODS;
@@ -222,6 +236,9 @@ public:
 
     bool IsEnoughData();
     int GetStorageLimit();
+
+    void AddVetoedMasternode(const COutPoint& outpoint, const CService& addr, const std::string& reason);
+    std::map<COutPoint, VetoedMasternodeInfo> GetVetoedMasternodes(int nMaxAge = 86400); // Default 24 hours
 
     void UpdatedBlockTip(const CBlockIndex *pindex, CConnman& connman);
 };

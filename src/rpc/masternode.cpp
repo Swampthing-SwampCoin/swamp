@@ -147,6 +147,7 @@ UniValue masternode(const UniValue& params, bool fHelp)
                 "  list-conf    - Print masternode.conf in JSON format\n"
                 "  winner       - Print info on next masternode winner to vote for\n"
                 "  winners      - Print list of masternode winners\n"
+                "  winners vetoed (max_age) - Print list of masternodes vetoed from payments (default: 24h)\n"
                 );
 
     if (strCommand == "list")
@@ -404,6 +405,42 @@ UniValue masternode(const UniValue& params, bool fHelp)
 
     if (strCommand == "winners")
     {
+        // Check for "vetoed" subcommand
+        if (params.size() >= 2 && params[1].get_str() == "vetoed") {
+            int nMaxAge = 86400; // Default 24 hours
+
+            if (params.size() >= 3) {
+                nMaxAge = atoi(params[2].get_str());
+            }
+
+            if (params.size() > 3)
+                throw JSONRPCError(RPC_INVALID_PARAMETER, "Correct usage is 'masternode winners vetoed ( \"max_age_seconds\" )'");
+
+            UniValue obj(UniValue::VARR);
+            auto vetoedMNs = mnpayments.GetVetoedMasternodes(nMaxAge);
+
+            for(auto& pair : vetoedMNs) {
+                UniValue mnObj(UniValue::VOBJ);
+                mnObj.push_back(Pair("outpoint", pair.first.ToStringShort()));
+                mnObj.push_back(Pair("address", pair.second.addr.ToString()));
+                mnObj.push_back(Pair("time_vetoed", pair.second.nTimeVetoed));
+                mnObj.push_back(Pair("time_ago", (GetAdjustedTime() - pair.second.nTimeVetoed)));
+                mnObj.push_back(Pair("reason", pair.second.strReason));
+
+                // Try to get masternode info
+                CMasternode* pmn = mnodeman.Find(pair.first);
+                if(pmn != NULL) {
+                    mnObj.push_back(Pair("status", pmn->GetStateString()));
+                    mnObj.push_back(Pair("protocol", pmn->nProtocolVersion));
+                }
+
+                obj.push_back(mnObj);
+            }
+
+            return obj;
+        }
+
+        // Original winners command
         int nHeight;
         {
             LOCK(cs_main);

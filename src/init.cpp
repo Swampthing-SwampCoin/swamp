@@ -592,6 +592,7 @@ std::string HelpMessage(HelpMessageMode mode)
     strUsage += HelpMessageOpt("-mnconf=<file>", strprintf(_("Specify masternode configuration file (default: %s)"), "masternode.conf"));
     strUsage += HelpMessageOpt("-mnconflock=<n>", strprintf(_("Lock masternodes from masternode configuration file (default: %u)"), 1));
     strUsage += HelpMessageOpt("-masternodeprivkey=<n>", _("Set the masternode private key"));
+    strUsage += HelpMessageOpt("-mnphantomcheck=<n>", strprintf(_("Enable phantom masternode detection via P2P connectivity check before voting (0-1, default: %u)"), 1));
 
 #ifdef ENABLE_WALLET
     strUsage += HelpMessageGroup(_("PrivateSend options:"));
@@ -1965,7 +1966,11 @@ bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
         return InitError("You can not start a masternode in litemode");
     }
 
+    // Phantom masternode detection via P2P connectivity check
+    fMasternodePhantomCheck = GetBoolArg("-mnphantomcheck", true);
+
     LogPrintf("fLiteMode %d\n", fLiteMode);
+    LogPrintf("fMasternodePhantomCheck %d\n", fMasternodePhantomCheck);
     LogPrintf("nInstantSendDepth %d\n", nInstantSendDepth);
 #ifdef ENABLE_WALLET
     LogPrintf("PrivateSend rounds %d\n", privateSendClient.nPrivateSendRounds);

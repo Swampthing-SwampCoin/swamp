@@ -22,6 +22,9 @@ CCriticalSection cs_vecPayees;
 CCriticalSection cs_mapMasternodeBlocks;
 CCriticalSection cs_mapMasternodePaymentVotes;
 
+/** Enable phantom masternode detection via P2P connectivity check */
+bool fMasternodePhantomCheck = true;
+
 /**
 * IsBlockValueValid
 *
@@ -811,19 +814,38 @@ bool CMasternodePayments::ProcessBlock(int nBlockHeight, CConnman& connman)
     LogPrintf("CMasternodePayments::ProcessBlock -- Masternode found by GetNextMasternodeInQueueForPayment(): %s\n", mnInfo.vin.prevout.ToStringShort());
 
     // SOLUTION 3: Verify P2P connectivity before voting (anti-phantom masternode measure)
-    // Check if we've successfully connected to this masternode recently (within 1 hour)
-    // This avoids hammering masternodes with connection attempts every block
-    CMasternode* pmn = mnodeman.Find(mnInfo.vin.prevout);
-    bool needsConnectivityCheck = true;
+    // This check can be disabled with -mnphantomcheck=0 in swamp.conf
+    if(fMasternodePhantomCheck) {
+        // Check for IP version compatibility first
+        // If the payee is IPv4-only and we can't reach IPv4, or vice versa for IPv6,
+        // skip the connectivity check to avoid false positives on non-dual-stack servers
+        CNetAddr payeeAddr = mnInfo.addr;
+        bool canReachPayee = true;
 
-    if(pmn != NULL && pmn->HasRecentConnection(3600)) {
-        // We've connected successfully within the last hour, skip the check
-        needsConnectivityCheck = false;
-        LogPrint("mnpayments", "CMasternodePayments::ProcessBlock -- Masternode %s has recent connection, skipping check\n",
-                 mnInfo.vin.prevout.ToStringShort());
-    }
+        if(payeeAddr.IsIPv4() && !IsReachable(NET_IPV4)) {
+            LogPrint("mnpayments", "CMasternodePayments::ProcessBlock -- Skipping phantom check for %s: payee is IPv4 but we cannot reach IPv4 network\n",
+                     mnInfo.vin.prevout.ToStringShort());
+            canReachPayee = false;
+        } else if(payeeAddr.IsIPv6() && !IsReachable(NET_IPV6)) {
+            LogPrint("mnpayments", "CMasternodePayments::ProcessBlock -- Skipping phantom check for %s: payee is IPv6 but we cannot reach IPv6 network\n",
+                     mnInfo.vin.prevout.ToStringShort());
+            canReachPayee = false;
+        }
 
-    if(needsConnectivityCheck) {
+        if(canReachPayee) {
+            // Check if we've successfully connected to this masternode recently (within 1 hour)
+            // This avoids hammering masternodes with connection attempts every block
+            CMasternode* pmn = mnodeman.Find(mnInfo.vin.prevout);
+            bool needsConnectivityCheck = true;
+
+            if(pmn != NULL && pmn->HasRecentConnection(3600)) {
+                // We've connected successfully within the last hour, skip the check
+                needsConnectivityCheck = false;
+                LogPrint("mnpayments", "CMasternodePayments::ProcessBlock -- Masternode %s has recent connection, skipping check\n",
+                         mnInfo.vin.prevout.ToStringShort());
+            }
+
+            if(needsConnectivityCheck) {
         // Check if we already have an active connection to this masternode
         CNode* pnode = connman.FindNode(mnInfo.addr);
         bool alreadyConnected = (pnode != NULL);
@@ -834,6 +856,7 @@ bool CMasternodePayments::ProcessBlock(int nBlockHeight, CConnman& connman)
             if(pnode == NULL) {
                 LogPrintf("CMasternodePayments::ProcessBlock -- WARNING: Can't connect to masternode %s at %s, skipping vote (possible phantom masternode)\n",
                           mnInfo.vin.prevout.ToStringShort(), mnInfo.addr.ToString());
+                AddVetoedMasternode(mnInfo.vin.prevout, mnInfo.addr, "TCP connection failed");
                 return false;
             }
         }
@@ -851,16 +874,21 @@ bool CMasternodePayments::ProcessBlock(int nBlockHeight, CConnman& connman)
             if(!pnode->fSuccessfullyConnected) {
                 LogPrintf("CMasternodePayments::ProcessBlock -- WARNING: Masternode %s at %s accepted TCP connection but failed protocol handshake, skipping vote (likely phantom masternode)\n",
                           mnInfo.vin.prevout.ToStringShort(), mnInfo.addr.ToString());
+                AddVetoedMasternode(mnInfo.vin.prevout, mnInfo.addr, "Protocol handshake failed (no VERSION/VERACK)");
                 return false;
             }
         }
 
-        // Successfully connected AND completed protocol handshake - update tracking
-        if(pmn != NULL) {
-            pmn->UpdateSuccessfulConnection();
-            LogPrint("mnpayments", "CMasternodePayments::ProcessBlock -- Successfully verified masternode %s with protocol handshake\n",
-                     mnInfo.vin.prevout.ToStringShort());
+                // Successfully connected AND completed protocol handshake - update tracking
+                if(pmn != NULL) {
+                    pmn->UpdateSuccessfulConnection();
+                    LogPrint("mnpayments", "CMasternodePayments::ProcessBlock -- Successfully verified masternode %s with protocol handshake\n",
+                             mnInfo.vin.prevout.ToStringShort());
+                }
+            }
         }
+    } else {
+        LogPrint("mnpayments", "CMasternodePayments::ProcessBlock -- Phantom masternode check disabled, skipping P2P connectivity verification\n");
     }
 
 
@@ -1137,4 +1165,27 @@ void CMasternodePayments::UpdatedBlockTip(const CBlockIndex *pindex, CConnman& c
 
     CheckPreviousBlockVotes(nFutureBlock - 1);
     ProcessBlock(nFutureBlock, connman);
+}
+
+void CMasternodePayments::AddVetoedMasternode(const COutPoint& outpoint, const CService& addr, const std::string& reason)
+{
+    LOCK(cs_mapMasternodeBlocks);
+    mapVetoedMasternodes[outpoint] = VetoedMasternodeInfo(outpoint, addr, GetAdjustedTime(), reason);
+    LogPrintf("CMasternodePayments::AddVetoedMasternode -- Vetoed masternode %s at %s, reason: %s\n",
+              outpoint.ToStringShort(), addr.ToString(), reason);
+}
+
+std::map<COutPoint, CMasternodePayments::VetoedMasternodeInfo> CMasternodePayments::GetVetoedMasternodes(int nMaxAge)
+{
+    LOCK(cs_mapMasternodeBlocks);
+    std::map<COutPoint, VetoedMasternodeInfo> result;
+    int64_t nNow = GetAdjustedTime();
+
+    for(auto& pair : mapVetoedMasternodes) {
+        if(nMaxAge == 0 || (nNow - pair.second.nTimeVetoed) <= nMaxAge) {
+            result[pair.first] = pair.second;
+        }
+    }
+
+    return result;
 }
