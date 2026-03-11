@@ -26,7 +26,7 @@ If you like the idea of owning and controlling your own money as well as funding
 <tr><td>Maximum SWAMP supply</td><td>40,000,000</td></tr>
 <tr><td>Premine</td><td>50,000 SWAMP (For masternodes and swap)</td></tr>
 <tr><td>Blocksize</td><td>1 MB</td></tr>
-<tr><td>Blocktime average</td><td>110 seconds (DGW3)</td></tr>
+<tr><td>Blocktime average</td><td>120 seconds (DGW3)</td></tr>
 <tr><td>Number of transaction confirmations</td><td>6</td></tr>
 <tr><td>Mined Maturity</td><td>101 confirmations</td></tr>
 <tr><td>Transaction Maturity</td><td>6 confirmations</td></tr>
