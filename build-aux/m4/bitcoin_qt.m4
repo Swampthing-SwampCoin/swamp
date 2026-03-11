@@ -112,6 +112,7 @@ AC_DEFUN([BITCOIN_QT_CONFIGURE],[
   if test x$bitcoin_qt_got_major_vers = x5; then
     _BITCOIN_QT_IS_STATIC
     if test x$bitcoin_cv_static_qt = xyes; then
+      _BITCOIN_QT_CHECK_STATIC_LIBS
       _BITCOIN_QT_FIND_STATIC_PLUGINS
       AC_DEFINE(QT_STATICPLUGIN, 1, [Define this symbol if qt plugins are static])
       AC_CACHE_CHECK(for Qt < 5.4, bitcoin_cv_need_acc_widget,[AC_COMPILE_IFELSE([AC_LANG_PROGRAM(
@@ -127,10 +128,14 @@ AC_DEFUN([BITCOIN_QT_CONFIGURE],[
         _BITCOIN_QT_CHECK_STATIC_PLUGINS([Q_IMPORT_PLUGIN(AccessibleFactory)], [-lqtaccessiblewidgets])
       fi
       if test x$TARGET_OS = xwindows; then
+        dnl Linking against wtsapi32 is required. See Bitcoin Core #17749
+        AX_CHECK_LINK_FLAG([-lwtsapi32], [QT_LIBS="$QT_LIBS -lwtsapi32"], [AC_MSG_ERROR([could not link against -lwtsapi32])])
+        dnl Linking against dwmapi is required for Desktop Window Manager functions
+        AX_CHECK_LINK_FLAG([-ldwmapi], [QT_LIBS="$QT_LIBS -ldwmapi"], [AC_MSG_ERROR([could not link against -ldwmapi])])
         _BITCOIN_QT_CHECK_STATIC_PLUGINS([Q_IMPORT_PLUGIN(QWindowsIntegrationPlugin)],[-lqwindows])
         AC_DEFINE(QT_QPA_PLATFORM_WINDOWS, 1, [Define this symbol if the qt platform is windows])
       elif test x$TARGET_OS = xlinux; then
-        _BITCOIN_QT_CHECK_STATIC_PLUGINS([Q_IMPORT_PLUGIN(QXcbIntegrationPlugin)],[-lqxcb -lxcb-static])
+        _BITCOIN_QT_CHECK_STATIC_PLUGINS([Q_IMPORT_PLUGIN(QXcbIntegrationPlugin)],[-lqxcb])
         AC_DEFINE(QT_QPA_PLATFORM_XCB, 1, [Define this symbol if the qt platform is xcb])
       elif test x$TARGET_OS = xdarwin; then
         AX_CHECK_LINK_FLAG([[-framework IOKit]],[QT_LIBS="$QT_LIBS -framework IOKit"],[AC_MSG_ERROR(could not iokit framework)])
@@ -334,6 +339,23 @@ AC_DEFUN([_BITCOIN_QT_CHECK_STATIC_PLUGINS],[
   LIBS="$CHECK_STATIC_PLUGINS_TEMP_LIBS"
 ])
 
+dnl Internal. Check Qt static libs with PKG_CHECK_MODULES.
+dnl Outputs: QT_LIBS is prepended.
+AC_DEFUN([_BITCOIN_QT_CHECK_STATIC_LIBS], [
+  m4_ifdef([PKG_CHECK_MODULES],[
+    PKG_CHECK_MODULES([QT_ACCESSIBILITY], [Qt5AccessibilitySupport], [QT_LIBS="$QT_ACCESSIBILITY_LIBS $QT_LIBS"], [AC_MSG_WARN([Qt5AccessibilitySupport not found])])
+    PKG_CHECK_MODULES([QT_DEVICEDISCOVERY], [Qt5DeviceDiscoverySupport], [QT_LIBS="$QT_DEVICEDISCOVERY_LIBS $QT_LIBS"], [AC_MSG_WARN([Qt5DeviceDiscoverySupport not found])])
+    PKG_CHECK_MODULES([QT_EDID], [Qt5EdidSupport], [QT_LIBS="$QT_EDID_LIBS $QT_LIBS"], [AC_MSG_WARN([Qt5EdidSupport not found])])
+    PKG_CHECK_MODULES([QT_EVENTDISPATCHER], [Qt5EventDispatcherSupport], [QT_LIBS="$QT_EVENTDISPATCHER_LIBS $QT_LIBS"], [AC_MSG_WARN([Qt5EventDispatcherSupport not found])])
+    PKG_CHECK_MODULES([QT_FB], [Qt5FbSupport], [QT_LIBS="$QT_FB_LIBS $QT_LIBS"], [AC_MSG_WARN([Qt5FbSupport not found])])
+    PKG_CHECK_MODULES([QT_FONTDATABASE], [Qt5FontDatabaseSupport], [QT_LIBS="$QT_FONTDATABASE_LIBS $QT_LIBS"], [AC_MSG_WARN([Qt5FontDatabaseSupport not found])])
+    PKG_CHECK_MODULES([QT_THEME], [Qt5ThemeSupport], [QT_LIBS="$QT_THEME_LIBS $QT_LIBS"], [AC_MSG_WARN([Qt5ThemeSupport not found])])
+    if test x$TARGET_OS = xwindows; then
+      PKG_CHECK_MODULES([QT_WINDOWSUIAUTOMATION], [Qt5WindowsUIAutomationSupport], [QT_LIBS="$QT_WINDOWSUIAUTOMATION_LIBS $QT_LIBS"], [AC_MSG_WARN([Qt5WindowsUIAutomationSupport not found])])
+    fi
+  ])
+])
+
 dnl Internal. Find paths necessary for linking qt static plugins
 dnl Inputs: bitcoin_qt_got_major_vers. 4 or 5.
 dnl Inputs: qt_plugin_path. optional.
@@ -348,9 +370,11 @@ AC_DEFUN([_BITCOIN_QT_FIND_STATIC_PLUGINS],[
       fi
      m4_ifdef([PKG_CHECK_MODULES],[
      if test x$use_pkgconfig = xyes; then
-       PKG_CHECK_MODULES([QTPLATFORM], [Qt5PlatformSupport], [QT_LIBS="$QTPLATFORM_LIBS $QT_LIBS"])
+       dnl Qt5PlatformSupport was removed in Qt 5.15, check for it but don't fail if not found
+       PKG_CHECK_MODULES([QTPLATFORM], [Qt5PlatformSupport], [QT_LIBS="$QTPLATFORM_LIBS $QT_LIBS"], [:])
        if test x$TARGET_OS = xlinux; then
-         PKG_CHECK_MODULES([X11XCB], [x11-xcb], [QT_LIBS="$X11XCB_LIBS $QT_LIBS"])
+         dnl x11-xcb is only needed when using xcb-xlib, make it optional
+         PKG_CHECK_MODULES([X11XCB], [x11-xcb], [QT_LIBS="$X11XCB_LIBS $QT_LIBS"], [:])
          if ${PKG_CONFIG} --exists "Qt5Core >= 5.5" 2>/dev/null; then
            PKG_CHECK_MODULES([QTXCBQPA], [Qt5XcbQpa], [QT_LIBS="$QTXCBQPA_LIBS $QT_LIBS"])
          fi

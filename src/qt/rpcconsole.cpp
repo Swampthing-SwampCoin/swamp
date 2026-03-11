@@ -262,6 +262,14 @@ RPCConsole::RPCConsole(const PlatformStyle *platformStyle, QWidget *parent) :
     consoleFontSize(0)
 {
     ui->setupUi(this);
+
+    // Apply stylesheet directly since RPCConsole may have no parent
+    // and won't inherit the main window's stylesheet
+    QString styleSheet = GUIUtil::loadStyleSheet();
+    if (!styleSheet.isEmpty()) {
+        this->setStyleSheet(styleSheet);
+    }
+
     GUIUtil::restoreWindowGeometry("nRPCConsoleWindow", this->size(), this);
     QString theme = GUIUtil::getThemeName();
     if (platformStyle->getImagesOnButtons()) {

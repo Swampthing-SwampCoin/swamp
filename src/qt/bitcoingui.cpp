@@ -1,5 +1,5 @@
 // Copyright (c) 2011-2015 The Bitcoin Core developers
-// Copyright (c) 2014-2018 The Dash Core developers 
+// Copyright (c) 2014-2018 The Dash Core developers
 // Copyright (c) 2018-2018 The Swamp Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -19,6 +19,8 @@
 #include "platformstyle.h"
 #include "rpcconsole.h"
 #include "utilitydialog.h"
+
+using namespace boost::placeholders;
 
 #ifdef ENABLE_WALLET
 #include "walletframe.h"
@@ -263,7 +265,7 @@ BitcoinGUI::BitcoinGUI(const PlatformStyle *platformStyle, const NetworkStyle *n
 #ifndef QT_NO_TOOLTIP
     discord->setToolTip(QApplication::translate("OverviewPage", "Join the Official Swamp Coin Discord Community.", nullptr));
 #endif // QT_NO_TOOLTIP
-    discord->setText(QApplication::translate("OverviewPage", "<a href=\"https://discord.gg/r7zKfy5\"><img src=\":/icons/discord\" width=\"21\" height=\"21\"></a>", nullptr));
+    discord->setText(QApplication::translate("OverviewPage", "<a href=\"https://discord.gg/PxwMzE2\"><img src=\":/icons/discord\" width=\"21\" height=\"21\"></a>", nullptr));
             
             QLabel* webs = new QLabel();
     webs->setObjectName(QStringLiteral("webs"));

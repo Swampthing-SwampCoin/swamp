@@ -645,9 +645,9 @@ std::string HelpMessage(HelpMessageMode mode)
 std::string LicenseInfo()
 {
     // todo: remove urls from translations on next change
-    return FormatParagraph(strprintf(_("Copyright (C) 2009-%i The Bitcoin Core Developers"), COPYRIGHT_YEAR)) + "\n" +
+    return FormatParagraph(_("Copyright (C) 2009-2018 The Bitcoin Core Developers")) + "\n" +
            "\n" +
-           FormatParagraph(strprintf(_("Copyright (C) 2014-%i The Dash Core Developers"), COPYRIGHT_YEAR)) + "\n" +
+           FormatParagraph(_("Copyright (C) 2014-2018 The Dash Core Developers")) + "\n" +
            "\n" +
            FormatParagraph(strprintf(_("Copyright (C) 2018-%i The Swamp Core Developers"), COPYRIGHT_YEAR)) + "\n" +
            "\n" +

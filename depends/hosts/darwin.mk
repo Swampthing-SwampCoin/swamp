@@ -1,3 +1,5 @@
+darwin_cmake_system_name=Darwin
+
 OSX_MIN_VERSION=10.7
 OSX_SDK_VERSION=10.9
 OSX_SDK=$(SDK_PATH)/MacOSX$(OSX_SDK_VERSION).sdk

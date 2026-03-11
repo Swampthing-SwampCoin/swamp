@@ -1,3 +1,5 @@
+linux_cmake_system_name=Linux
+
 linux_CFLAGS=-pipe
 linux_CXXFLAGS=$(linux_CFLAGS)
 

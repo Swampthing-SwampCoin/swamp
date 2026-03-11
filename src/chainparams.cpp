@@ -1,7 +1,7 @@
 // Copyright (c) 2010 Satoshi Nakamoto
 // Copyright (c) 2009-2014 The Bitcoin Core developers
 // Copyright (c) 2014-2018 The Dash Core developers 
-// Copyright (c) 2018-2018 The Swamp Core developers
+// Copyright (c) 2018-2026 The Swamp Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -95,10 +95,10 @@ public:
         consensus.vDeployments[Consensus::DEPLOYMENT_DIP0001].nThreshold = 3226; // 80% of 4032
 
         // The best chain should have at least this much work.
-        consensus.nMinimumChainWork = uint256S("0x0000000000000000000000000000000000000000000000000000000000000000");
+        consensus.nMinimumChainWork = uint256S("0x00000000000000000000000000000000000000000000000000000908d7675c60");
 
         // By default assume that the signatures in ancestors of this block are valid.
-        consensus.defaultAssumeValid = uint256S("0x000003fd1dff397d1be86183efd9e13f0316b5f5a3082bac91975a421bc43021");
+        consensus.defaultAssumeValid = uint256S("0x000001b1d1fcaadd0a6f8c2373e0b91ccc368bc5daafa8b9d8ef5919495efb61");
 
         /**
          * The message start string is designed to be unlikely to occur in normal data.
@@ -122,12 +122,60 @@ public:
         assert(genesis.hashMerkleRoot == uint256S("0xde4fe11d6d0c735a192d4e6eed593ad575ccd671ff4ff0d9188e347e067d028d"));
 
         vSeeds.clear();
-        vSeeds.push_back(CDNSSeedData("45.32.217.164", "45.32.217.164"));
-		vSeeds.push_back(CDNSSeedData("108.61.202.115", "108.61.202.115"));
-		vSeeds.push_back(CDNSSeedData("104.207.149.95", "104.207.149.95"));
-		vSeeds.push_back(CDNSSeedData("45.32.176,249", "45.32.176,249"));
-		vSeeds.push_back(CDNSSeedData("198.13.39.174", "198.13.39.174"));
-	        vSeeds.push_back(CDNSSeedData("104.155.177.16", "104.155.177.16"));
+        // IPv6 seed nodes (tried first)
+        vSeeds.push_back(CDNSSeedData("2a0d:8142:0:53::", "2a0d:8142:0:53::"));
+        vSeeds.push_back(CDNSSeedData("2605:6f01:2000:b0::76a5:2be0", "2605:6f01:2000:b0::76a5:2be0"));
+        vSeeds.push_back(CDNSSeedData("2605:6f01:2000:b0::7a65:f45b", "2605:6f01:2000:b0::7a65:f45b"));
+        vSeeds.push_back(CDNSSeedData("2605:6f01:2000:b7::c7ff:96f2", "2605:6f01:2000:b7::c7ff:96f2"));
+        vSeeds.push_back(CDNSSeedData("2605:6f01:2000:b7::52e8", "2605:6f01:2000:b7::52e8"));
+
+        // IPv4 seed nodes
+        vSeeds.push_back(CDNSSeedData("167.86.127.48", "167.86.127.48"));
+        vSeeds.push_back(CDNSSeedData("207.180.198.37", "207.180.198.37"));
+        vSeeds.push_back(CDNSSeedData("173.249.15.113", "173.249.15.113"));
+        vSeeds.push_back(CDNSSeedData("207.58.173.147", "207.58.173.147"));
+        vSeeds.push_back(CDNSSeedData("204.44.70.109", "204.44.70.109"));
+        vSeeds.push_back(CDNSSeedData("108.174.50.173", "108.174.50.173"));
+        vSeeds.push_back(CDNSSeedData("155.94.154.196", "155.94.154.196"));
+        vSeeds.push_back(CDNSSeedData("37.26.136.250", "37.26.136.250"));
+        vSeeds.push_back(CDNSSeedData("185.241.151.35", "185.241.151.35"));
+        vSeeds.push_back(CDNSSeedData("107.175.33.105", "107.175.33.105"));
+        vSeeds.push_back(CDNSSeedData("172.245.144.102", "172.245.144.102"));
+        vSeeds.push_back(CDNSSeedData("5.189.182.132", "5.189.182.132"));
+        vSeeds.push_back(CDNSSeedData("45.130.23.30", "45.130.23.30"));
+        vSeeds.push_back(CDNSSeedData("51.79.71.78", "51.79.71.78"));
+        vSeeds.push_back(CDNSSeedData("51.79.69.212", "51.79.69.212"));
+        vSeeds.push_back(CDNSSeedData("51.79.65.49", "51.79.65.49"));
+        vSeeds.push_back(CDNSSeedData("51.79.65.106", "51.79.65.106"));
+        vSeeds.push_back(CDNSSeedData("129.146.161.225", "129.146.161.225"));
+        vSeeds.push_back(CDNSSeedData("141.145.207.8", "141.145.207.8"));
+        vSeeds.push_back(CDNSSeedData("141.145.197.15", "141.145.197.15"));
+        vSeeds.push_back(CDNSSeedData("183.88.212.13", "183.88.212.13"));
+        vSeeds.push_back(CDNSSeedData("213.21.195.97", "213.21.195.97"));
+        vSeeds.push_back(CDNSSeedData("141.145.201.104", "141.145.201.104"));
+        vSeeds.push_back(CDNSSeedData("23.176.104.23", "23.176.104.23"));
+        vSeeds.push_back(CDNSSeedData("5.189.174.19", "5.189.174.19"));
+        vSeeds.push_back(CDNSSeedData("62.84.177.86", "62.84.177.86"));
+        vSeeds.push_back(CDNSSeedData("1.94.105.158", "1.94.105.158"));
+        vSeeds.push_back(CDNSSeedData("141.145.204.242", "141.145.204.242"));
+        vSeeds.push_back(CDNSSeedData("113.120.117.17", "113.120.117.17"));
+        vSeeds.push_back(CDNSSeedData("173.34.36.239", "173.34.36.239"));
+        vSeeds.push_back(CDNSSeedData("49.48.52.237", "49.48.52.237"));
+        vSeeds.push_back(CDNSSeedData("107.172.73.124", "107.172.73.124"));
+        vSeeds.push_back(CDNSSeedData("161.97.173.197", "161.97.173.197"));
+        vSeeds.push_back(CDNSSeedData("173.254.249.46", "173.254.249.46"));
+        vSeeds.push_back(CDNSSeedData("129.146.20.199", "129.146.20.199"));
+        vSeeds.push_back(CDNSSeedData("66.70.182.1", "66.70.182.1"));
+        vSeeds.push_back(CDNSSeedData("153.66.173.115", "153.66.173.115"));
+        vSeeds.push_back(CDNSSeedData("67.215.244.133", "67.215.244.133"));
+        vSeeds.push_back(CDNSSeedData("85.122.121.172", "85.122.121.172"));
+        vSeeds.push_back(CDNSSeedData("93.44.134.30", "93.44.134.30"));
+        vSeeds.push_back(CDNSSeedData("86.125.212.92", "86.125.212.92"));
+        vSeeds.push_back(CDNSSeedData("27.138.155.95", "27.138.155.95"));
+        vSeeds.push_back(CDNSSeedData("141.145.211.89", "141.145.211.89"));
+        vSeeds.push_back(CDNSSeedData("129.146.20.255", "129.146.20.255"));
+        vSeeds.push_back(CDNSSeedData("161.97.182.56", "161.97.182.56"));
+        vSeeds.push_back(CDNSSeedData("31.223.40.180", "31.223.40.180"));
 
 
         // Swamp addresses start with 's'
@@ -155,14 +203,16 @@ public:
         nPoolMaxTransactions = 3;
         nFulfilledRequestExpireTime = 60*60; // fulfilled requests expire in 1 hour
         strSporkPubKey = "04825df8a146091cd7527a55a648cf1c23efb3cc25bed2029eaa17a606918be747b9afa29e08da4df312f8cfc9823fb3707635e8744000390574b40f28c0d509a9";
+        strSporkPubKeyNew = "04858d0b83030e13a4c6008ce6e854a75554e9eb2b80f4adaa38540232618c7b65a420cc8635666177a5a5742d6eaaa5c987ab2b825690f1b9fd2ab7ffbba5b811";
 
         checkpointData = (CCheckpointData) {
             boost::assign::map_list_of
             (     0, uint256S("0x000003fd1dff397d1be86183efd9e13f0316b5f5a3082bac91975a421bc43021"))
 			(100000, uint256S("0x0000038508708ac5387431ad5b53e439fb8b3e9ab2e6aae28e9573e5a19f4df8"))
-		        (200000, uint256S("0x000001a1593ab16e3c7d586594a9489b548e07fa94015d4b330431940408dbbc")),
-                1595325340, // * UNIX timestamp of last checkpoint block
-                200000,      // * total number of transactions between genesis and last checkpoint
+		        (200000, uint256S("0x000001a1593ab16e3c7d586594a9489b548e07fa94015d4b330431940408dbbc"))
+                (1520000, uint256S("0x000001b1d1fcaadd0a6f8c2373e0b91ccc368bc5daafa8b9d8ef5919495efb61")),
+                1772024106, // * UNIX timestamp of last checkpoint block
+                761660,     // * total number of transactions between genesis and last checkpoint
                             //   (the tx=... number in the SetBestChain debug.log lines)
                 708         // * estimated number of transactions per day after checkpoint
         };
@@ -272,6 +322,7 @@ public:
         nPoolMaxTransactions = 3;
         nFulfilledRequestExpireTime = 5*60; // fulfilled requests expire in 5 minutes
         strSporkPubKey = "04ee3e3feb1e780b98327ece9579ff24991b6b6294f4bf53435e5feeb40ba166cbf71dc2b074c2703fd757b54befbe363b18bf56ec5a51be08ea6e912301afd1f2";
+        strSporkPubKeyNew = "04858d0b83030e13a4c6008ce6e854a75554e9eb2b80f4adaa38540232618c7b65a420cc8635666177a5a5742d6eaaa5c987ab2b825690f1b9fd2ab7ffbba5b811";
 
         checkpointData = (CCheckpointData) {
             boost::assign::map_list_of

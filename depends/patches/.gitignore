@@ -1,0 +1,5 @@
+# The root .gitignore excludes all *.patch files globally.
+# Re-include patch files in this directory and all subdirectories,
+# since these are build system source files that must be tracked.
+!*.patch
+

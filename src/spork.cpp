@@ -249,17 +249,26 @@ bool CSporkMessage::Sign(std::string strSignKey)
 
 bool CSporkMessage::CheckSignature()
 {
-    //note: need to investigate why this is failing
     std::string strError = "";
     std::string strMessage = boost::lexical_cast<std::string>(nSporkID) + boost::lexical_cast<std::string>(nValue) + boost::lexical_cast<std::string>(nTimeSigned);
-    CPubKey pubkey(ParseHex(Params().SporkPubKey()));
 
-    if(!CMessageSigner::VerifyMessage(pubkey, vchSig, strMessage, strError)) {
-        LogPrintf("CSporkMessage::CheckSignature -- VerifyMessage() failed, error: %s\n", strError);
-        return false;
+    // Try old key
+    CPubKey pubkey(ParseHex(Params().SporkPubKey()));
+    if(CMessageSigner::VerifyMessage(pubkey, vchSig, strMessage, strError)) {
+        return true;
     }
 
-    return true;
+    // Try new key
+    std::string strNewKey = Params().SporkPubKeyNew();
+    if(!strNewKey.empty()) {
+        CPubKey pubkeyNew(ParseHex(strNewKey));
+        if(CMessageSigner::VerifyMessage(pubkeyNew, vchSig, strMessage, strError)) {
+            return true;
+        }
+    }
+
+    LogPrintf("CSporkMessage::CheckSignature -- VerifyMessage() failed with both keys, error: %s\n", strError);
+    return false;
 }
 
 void CSporkMessage::Relay(CConnman& connman)
