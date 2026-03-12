@@ -46,6 +46,14 @@ SWAMP is a finite, predictable, and egalitarian Proof-of-Work (PoW) cryptocurren
 
 ---
 
+## 🌐 Global Goals Of Related Ecosystem Services
+
+Our global goal is to create an infrastructure of many simple and complex cool services in different directions: investments, games, entertainment, quests, training, information processing, etc. 
+
+We are also building a platform where any enthusiast can propose their idea; if approved by the community, the idea receives funding for development and real-world implementation. Swampcoin serves as the primary means of payment, investment, and capitalization within this expanding infrastructure.
+
+---
+
 ## 🤝 Community & Support
 
 Join our community to help fund the improvement of Mother Earth. We coordinate primarily via Discord:
