@@ -726,6 +726,46 @@ void CleanupBlockRevFiles()
     }
 }
 
+static bool InvalidateKnownBadForkBlock(const CChainParams& chainparams)
+{
+    static const uint256 hashKnownBadForkBlock = uint256S("0x000000a1df3b73036c5662591a6736f9224be7934e1a30eecf0183475181d9aa");
+
+    CValidationState state;
+    bool fNeedActivateBestChain = false;
+
+    {
+        LOCK(cs_main);
+        BlockMap::iterator it = mapBlockIndex.find(hashKnownBadForkBlock);
+        if (it == mapBlockIndex.end()) {
+            return true;
+        }
+
+        CBlockIndex* pindexBad = it->second;
+        if (pindexBad->nStatus & BLOCK_FAILED_MASK) {
+            return true;
+        }
+
+        LogPrintf("Invalidating known bad fork block at startup: %s height=%d\n", hashKnownBadForkBlock.ToString(), pindexBad->nHeight);
+        if (!InvalidateBlock(state, chainparams.GetConsensus(), pindexBad)) {
+            return error("%s: InvalidateBlock failed for %s", __func__, hashKnownBadForkBlock.ToString());
+        }
+
+        fNeedActivateBestChain = true;
+    }
+
+    if (fNeedActivateBestChain && state.IsValid()) {
+        if (!ActivateBestChain(state, chainparams, NULL)) {
+            return error("%s: ActivateBestChain failed after invalidating %s", __func__, hashKnownBadForkBlock.ToString());
+        }
+    }
+
+    if (!state.IsValid()) {
+        return error("%s: failed to invalidate known bad fork block %s: %s", __func__, hashKnownBadForkBlock.ToString(), state.GetRejectReason());
+    }
+
+    return true;
+}
+
 void ThreadImport(std::vector<boost::filesystem::path> vImportFiles)
 {
     const CChainParams& chainparams = Params();
@@ -776,6 +816,12 @@ void ThreadImport(std::vector<boost::filesystem::path> vImportFiles)
         } else {
             LogPrintf("Warning: Could not open blocks file %s\n", path.string());
         }
+    }
+
+    if (!InvalidateKnownBadForkBlock(chainparams)) {
+        LogPrintf("Failed to invalidate known bad fork block during startup import\n");
+        StartShutdown();
+        return;
     }
 
     // scan for better chains in the block chain database, that are not yet connected in the active best chain
@@ -1633,6 +1679,11 @@ bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
                 if (!CVerifyDB().VerifyDB(chainparams, pcoinsdbview, GetArg("-checklevel", DEFAULT_CHECKLEVEL),
                               GetArg("-checkblocks", DEFAULT_CHECKBLOCKS))) {
                     strLoadError = _("Corrupted block database detected");
+                    break;
+                }
+
+                if (!InvalidateKnownBadForkBlock(chainparams)) {
+                    strLoadError = _("Failed to invalidate known bad fork block");
                     break;
                 }
             } catch (const std::exception& e) {
