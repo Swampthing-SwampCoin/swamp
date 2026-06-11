@@ -732,6 +732,8 @@ static bool InvalidateKnownBadForkBlock(const CChainParams& chainparams)
 
     CValidationState state;
     bool fNeedActivateBestChain = false;
+    bool fWasOnBadFork = false;
+    bool fResetBestHeader = false;
 
     {
         LOCK(cs_main);
@@ -745,6 +747,10 @@ static bool InvalidateKnownBadForkBlock(const CChainParams& chainparams)
             return true;
         }
 
+        fWasOnBadFork = chainActive.Contains(pindexBad);
+        fResetBestHeader = pindexBestHeader && pindexBestHeader->nHeight >= pindexBad->nHeight &&
+                           pindexBestHeader->GetAncestor(pindexBad->nHeight) == pindexBad;
+
         LogPrintf("Invalidating known bad fork block at startup: %s height=%d\n", hashKnownBadForkBlock.ToString(), pindexBad->nHeight);
         if (!InvalidateBlock(state, chainparams.GetConsensus(), pindexBad)) {
             return error("%s: InvalidateBlock failed for %s", __func__, hashKnownBadForkBlock.ToString());
@@ -756,6 +762,17 @@ static bool InvalidateKnownBadForkBlock(const CChainParams& chainparams)
     if (fNeedActivateBestChain && state.IsValid()) {
         if (!ActivateBestChain(state, chainparams, NULL)) {
             return error("%s: ActivateBestChain failed after invalidating %s", __func__, hashKnownBadForkBlock.ToString());
+        }
+
+        if (fResetBestHeader) {
+            LOCK(cs_main);
+            pindexBestHeader = chainActive.Tip();
+            LogPrintf("Reset best header pointer to active tip after invalidating known bad fork\n");
+        }
+
+        if (fWasOnBadFork && g_connman) {
+            LogPrintf("Clearing banned peers after rollback from known bad fork\n");
+            g_connman->ClearBanned();
         }
     }
 
