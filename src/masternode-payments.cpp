@@ -135,6 +135,48 @@ static bool IsStrictMasternodePaymentEnforcementActive(bool fRequireMasternodePa
     return fRequireMasternodePayment || sporkManager.IsSporkActive(SPORK_16_STRICT_MASTERNODE_PAYMENT_ENFORCEMENT);
 }
 
+bool IsBlockPayeeValidForSubmitBlock(const CTransaction& txNew, int nBlockHeight, CAmount blockReward)
+{
+    const Consensus::Params& consensusParams = Params().GetConsensus();
+
+    if(nBlockHeight >= consensusParams.nSuperblockStartBlock &&
+       sporkManager.IsSporkActive(SPORK_9_SUPERBLOCKS_ENABLED) &&
+       CSuperblockManager::IsSuperblockTriggered(nBlockHeight)) {
+        if(CSuperblockManager::IsValid(txNew, nBlockHeight, blockReward)) {
+            return true;
+        }
+
+        LogPrintf("IsBlockPayeeValidForSubmitBlock -- ERROR: Invalid superblock detected at height %d: %s", nBlockHeight, txNew.ToString());
+        return false;
+    }
+
+    CScript payee;
+    if(!mnpayments.GetBlockPayee(nBlockHeight, payee)) {
+        int nCount = 0;
+        masternode_info_t mnInfo;
+        if(!mnodeman.GetNextMasternodeInQueueForPayment(nBlockHeight, true, nCount, mnInfo)) {
+            LogPrintf("IsBlockPayeeValidForSubmitBlock -- ERROR: Failed to determine masternode payee at height %d\n", nBlockHeight);
+            return false;
+        }
+        payee = GetScriptForDestination(mnInfo.pubKeyCollateralAddress.GetID());
+    }
+
+    CAmount nMasternodePayment = GetMasternodePayment(nBlockHeight, blockReward);
+    BOOST_FOREACH(const CTxOut& txout, txNew.vout) {
+        if(txout.scriptPubKey == payee && txout.nValue == nMasternodePayment) {
+            LogPrint("mnpayments", "IsBlockPayeeValidForSubmitBlock -- Found required masternode payment at height %d\n", nBlockHeight);
+            return true;
+        }
+    }
+
+    CTxDestination address1;
+    ExtractDestination(payee, address1);
+    CBitcoinAddress address2(address1);
+    LogPrintf("IsBlockPayeeValidForSubmitBlock -- ERROR: Missing masternode payment at height %d, expected payee '%s', amount: %f SWAMP\n",
+              nBlockHeight, address2.ToString(), (float)nMasternodePayment/COIN);
+    return false;
+}
+
 bool IsBlockPayeeValid(const CTransaction& txNew, int nBlockHeight, CAmount blockReward, bool fRequireMasternodePayment)
 {
     const bool fStrictMasternodePaymentEnforcement = IsStrictMasternodePaymentEnforcementActive(fRequireMasternodePayment);

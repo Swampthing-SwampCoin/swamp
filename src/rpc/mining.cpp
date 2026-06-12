@@ -815,7 +815,7 @@ UniValue submitblock(const UniValue& params, bool fHelp)
         }
     }
 
-    if (nBlockHeight > 0 && !IsBlockPayeeValid(block.vtx[0], nBlockHeight, block.vtx[0].GetValueOut(), true)) {
+    if (nBlockHeight > 0 && !IsBlockPayeeValidForSubmitBlock(block.vtx[0], nBlockHeight, block.vtx[0].GetValueOut())) {
         CValidationState state;
         state.Invalid(false, REJECT_INVALID, "bad-cb-payee");
         return BIP22ValidationResult(state);
