@@ -187,9 +187,9 @@ QWidget *SendCoinsEntry::setupTabChain(QWidget *prev)
     QWidget::setTabOrder(prev, ui->payTo);
     QWidget::setTabOrder(ui->payTo, ui->addAsLabel);
     QWidget *w = ui->payAmount->setupTabChain(ui->addAsLabel);
-    QWidget::setTabOrder(w, ui->useAvailableButton);
-    QWidget::setTabOrder(ui->useAvailableButton, ui->checkboxSubtractFeeFromAmount);
-    QWidget::setTabOrder(ui->checkboxSubtractFeeFromAmount, ui->addressBookButton);
+    QWidget::setTabOrder(w, ui->checkboxSubtractFeeFromAmount);
+    QWidget::setTabOrder(ui->checkboxSubtractFeeFromAmount, ui->useAvailableButton);
+    QWidget::setTabOrder(ui->useAvailableButton, ui->addressBookButton);
     QWidget::setTabOrder(ui->addressBookButton, ui->pasteButton);
     QWidget::setTabOrder(ui->pasteButton, ui->deleteButton);
     return ui->deleteButton;
