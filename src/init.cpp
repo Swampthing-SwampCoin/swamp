@@ -448,6 +448,7 @@ std::string HelpMessage(HelpMessageMode mode)
     strUsage += HelpMessageOpt("-listen", _("Accept connections from outside (default: 1 if no -proxy or -connect)"));
     strUsage += HelpMessageOpt("-listenonion", strprintf(_("Automatically create Tor hidden service (default: %d)"), DEFAULT_LISTEN_ONION));
     strUsage += HelpMessageOpt("-maxconnections=<n>", strprintf(_("Maintain at most <n> connections to peers (temporary service connections excluded) (default: %u)"), DEFAULT_MAX_PEER_CONNECTIONS));
+    strUsage += HelpMessageOpt("-maxoutboundconnections=<n>", strprintf(_("Maintain at most <n> automatic outbound connections to peers (default: %d, max: %d)"), DEFAULT_MAX_OUTBOUND_CONNECTIONS, MAX_MAX_OUTBOUND_CONNECTIONS));
     strUsage += HelpMessageOpt("-maxreceivebuffer=<n>", strprintf(_("Maximum per-connection receive buffer, <n>*1000 bytes (default: %u)"), DEFAULT_MAXRECEIVEBUFFER));
     strUsage += HelpMessageOpt("-maxsendbuffer=<n>", strprintf(_("Maximum per-connection send buffer, <n>*1000 bytes (default: %u)"), DEFAULT_MAXSENDBUFFER));
     strUsage += HelpMessageOpt("-onion=<ip:port>", strprintf(_("Use separate SOCKS5 proxy to reach peers via Tor hidden services (default: %s)"), "-proxy"));
@@ -1104,6 +1105,8 @@ bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
     int nBind = std::max((int)mapArgs.count("-bind") + (int)mapArgs.count("-whitebind"), 1);
     int nUserMaxConnections = GetArg("-maxconnections", DEFAULT_MAX_PEER_CONNECTIONS);
     int nMaxConnections = std::max(nUserMaxConnections, 0);
+    int nUserMaxOutboundConnections = GetArg("-maxoutboundconnections", DEFAULT_MAX_OUTBOUND_CONNECTIONS);
+    int nMaxOutboundConnections = std::max(std::min(nUserMaxOutboundConnections, MAX_MAX_OUTBOUND_CONNECTIONS), DEFAULT_MAX_OUTBOUND_CONNECTIONS);
 
     // Trim requested connection counts, to fit into system limitations
     nMaxConnections = std::max(std::min(nMaxConnections, (int)(FD_SETSIZE - nBind - MIN_CORE_FILEDESCRIPTORS)), 0);
@@ -1114,6 +1117,9 @@ bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
 
     if (nMaxConnections < nUserMaxConnections)
         InitWarning(strprintf(_("Reducing -maxconnections from %d to %d, because of system limitations."), nUserMaxConnections, nMaxConnections));
+
+    if (nMaxOutboundConnections != nUserMaxOutboundConnections)
+        InitWarning(strprintf(_("Adjusting -maxoutboundconnections from %d to %d (allowed range: %d..%d)."), nUserMaxOutboundConnections, nMaxOutboundConnections, DEFAULT_MAX_OUTBOUND_CONNECTIONS, MAX_MAX_OUTBOUND_CONNECTIONS));
 
     // ********************************************************* Step 3: parameter-to-internal-flags
 
@@ -2137,7 +2143,7 @@ bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
     connOptions.nLocalServices = nLocalServices;
     connOptions.nRelevantServices = nRelevantServices;
     connOptions.nMaxConnections = nMaxConnections;
-    connOptions.nMaxOutbound = std::min(MAX_OUTBOUND_CONNECTIONS, connOptions.nMaxConnections);
+    connOptions.nMaxOutbound = std::min(nMaxOutboundConnections, connOptions.nMaxConnections);
     connOptions.nMaxFeeler = 1;
     connOptions.nBestHeight = chainActive.Height();
     connOptions.uiInterface = &uiInterface;
