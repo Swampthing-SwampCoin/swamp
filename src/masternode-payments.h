@@ -35,7 +35,7 @@ extern CMasternodePayments mnpayments;
 
 /// TODO: all 4 functions do not belong here really, they should be refactored/moved somewhere (main.cpp ?)
 bool IsBlockValueValid(const CBlock& block, int nBlockHeight, CAmount blockReward, std::string &strErrorRet);
-bool IsBlockPayeeValid(const CTransaction& txNew, int nBlockHeight, CAmount blockReward);
+bool IsBlockPayeeValid(const CTransaction& txNew, int nBlockHeight, CAmount blockReward, bool fRequireMasternodePayment = false);
 void FillBlockPayments(CMutableTransaction& txNew, int nBlockHeight, CAmount blockReward, CTxOut& txoutMasternodeRet, std::vector<CTxOut>& voutSuperblockRet);
 std::string GetRequiredPaymentsString(int nBlockHeight);
 
@@ -101,7 +101,7 @@ public:
     bool GetBestPayee(CScript& payeeRet);
     bool HasPayeeWithVotes(const CScript& payeeIn, int nVotesReq);
 
-    bool IsTransactionValid(const CTransaction& txNew);
+    bool IsTransactionValid(const CTransaction& txNew, bool fRequireMasternodePayment = false);
 
     std::string GetRequiredPaymentsString();
 };
@@ -204,7 +204,7 @@ public:
     void CheckAndRemove();
 
     bool GetBlockPayee(int nBlockHeight, CScript& payee);
-    bool IsTransactionValid(const CTransaction& txNew, int nBlockHeight);
+    bool IsTransactionValid(const CTransaction& txNew, int nBlockHeight, bool fRequireMasternodePayment = false);
     bool IsScheduled(CMasternode& mn, int nNotBlockHeight);
 
     bool CanVote(COutPoint outMasternode, int nBlockHeight);
