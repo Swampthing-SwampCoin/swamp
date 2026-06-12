@@ -66,6 +66,11 @@ void SendCoinsEntry::on_pasteButton_clicked()
     ui->payTo->setText(QApplication::clipboard()->text());
 }
 
+void SendCoinsEntry::on_useAvailableButton_clicked()
+{
+    Q_EMIT useAvailableBalance(this);
+}
+
 void SendCoinsEntry::on_addressBookButton_clicked()
 {
     if(!model)
@@ -182,7 +187,8 @@ QWidget *SendCoinsEntry::setupTabChain(QWidget *prev)
     QWidget::setTabOrder(prev, ui->payTo);
     QWidget::setTabOrder(ui->payTo, ui->addAsLabel);
     QWidget *w = ui->payAmount->setupTabChain(ui->addAsLabel);
-    QWidget::setTabOrder(w, ui->checkboxSubtractFeeFromAmount);
+    QWidget::setTabOrder(w, ui->useAvailableButton);
+    QWidget::setTabOrder(ui->useAvailableButton, ui->checkboxSubtractFeeFromAmount);
     QWidget::setTabOrder(ui->checkboxSubtractFeeFromAmount, ui->addressBookButton);
     QWidget::setTabOrder(ui->addressBookButton, ui->pasteButton);
     QWidget::setTabOrder(ui->pasteButton, ui->deleteButton);
@@ -231,6 +237,16 @@ void SendCoinsEntry::setAddress(const QString &address)
 {
     ui->payTo->setText(address);
     ui->payAmount->setFocus();
+}
+
+void SendCoinsEntry::setAmount(const CAmount &amount)
+{
+    ui->payAmount->setValue(amount);
+}
+
+void SendCoinsEntry::setSubtractFeeFromAmount(bool checked)
+{
+    ui->checkboxSubtractFeeFromAmount->setChecked(checked);
 }
 
 bool SendCoinsEntry::isClear()

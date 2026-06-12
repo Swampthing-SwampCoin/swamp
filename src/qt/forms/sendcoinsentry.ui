@@ -151,9 +151,22 @@
      </widget>
     </item>
     <item row="2" column="1">
-     <layout class="QHBoxLayout" name="horizontalLayoutAmount" stretch="0,1">
+     <layout class="QHBoxLayout" name="horizontalLayoutAmount" stretch="0,0,1">
       <item>
        <widget class="BitcoinAmountField" name="payAmount"/>
+      </item>
+      <item>
+       <widget class="QPushButton" name="useAvailableButton">
+        <property name="toolTip">
+         <string>Use the remaining available balance for this recipient and subtract the fee from the amount.</string>
+        </property>
+        <property name="text">
+         <string>Use Available</string>
+        </property>
+        <property name="autoDefault">
+         <bool>false</bool>
+        </property>
+       </widget>
       </item>
       <item>
        <widget class="QCheckBox" name="checkboxSubtractFeeFromAmount">
